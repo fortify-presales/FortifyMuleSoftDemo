@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RulePack xmlns="xmlns://www.fortifysoftware.com/schema/rules" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="RulePack">
+    <RulePackID>Mulesoft Rules</RulePackID>
+    <SKU>NA</SKU>
+    <Name><![CDATA[Mulesoft Rulepack]]></Name>
+    <Activated>true</Activated>
+    <Version>1.0</Version>
+    <Description/>
+    <Rules version="3.2">
+        <RuleDefinitions>
+			<ConfigurationRule formatVersion="20.1">
+				<RuleID>CD3402F5-E945-44CB-9794-EAA75CA50A07</RuleID>
+				<MetaInfo>
+					<Group name="Accuracy">4.0</Group>
+                    <Group name="Impact">5.0</Group>
+                    <Group name="Probability">4.0</Group>
+                    <Group name="PrimaryAudience">security</Group>
+                    <Group name="RemediationEffort">1.0</Group>
+                    <Group name="audience">broad</Group>
+				</MetaInfo>
+                <VulnKingdom>Security Features</VulnKingdom>
+                <VulnCategory>Mulesoft Misconfiguration</VulnCategory>
+                <VulnSubcategory>HTTPS not required</VulnSubcategory>
+                <DefaultSeverity>2.0</DefaultSeverity>
+                <Description>
+					<Abstract>A HTTP Listener should be configured to use the HTTPS protocol.</Abstract>
+                </Description>
+	            <ConfigFile type="xml">
+	                <Pattern>(.*)\.xml</Pattern>
+	            </ConfigFile>
+                <XPathMatch expression="//*:listener-connection[namespace-uri()='http://www.mulesoft.org/schema/mule/http' and (@protocol!='HTTPS' or count(@protocol)=0)]"/>
+            </ConfigurationRule>
+            <ConfigurationRule formatVersion="20.1">
+				<RuleID>F9D509B9-2BC8-4EFE-B1EC-5205B11C3B20</RuleID>
+				<MetaInfo>
+					<Group name="Accuracy">4.0</Group>
+                    <Group name="Impact">2.0</Group>
+                    <Group name="Probability">3.0</Group>
+                    <Group name="PrimaryAudience">security</Group>
+                    <Group name="RemediationEffort">1.0</Group>
+                    <Group name="audience">broad</Group>
+				</MetaInfo>
+                <VulnKingdom>Security Features</VulnKingdom>
+                <VulnCategory>Mulesoft Misconfiguration</VulnCategory>
+                <VulnSubcategory>HTTP(S) port not configured</VulnSubcategory>
+                <DefaultSeverity>2.0</DefaultSeverity>
+                <Description>
+					<Abstract>A HTTP Listener should be configured to use a specific port.</Abstract>
+                </Description>
+	            <ConfigFile type="xml">
+	                <Pattern>(.*)\.xml</Pattern>
+	            </ConfigFile>
+                <XPathMatch expression="//*:listener-connection[namespace-uri()='http://www.mulesoft.org/schema/mule/http' and (@port='${http.port}' or @port='${https.port}')]"
+                	reporton="//*[local-name()='listener-config']"/>
+            </ConfigurationRule>
+            <ConfigurationRule formatVersion="20.1">
+				<RuleID>ff8867a4-cacb-11ec-9d64-0242ac120002</RuleID>
+				<MetaInfo>
+					<Group name="Accuracy">4.0</Group>
+                    <Group name="Impact">2.0</Group>
+                    <Group name="Probability">3.0</Group>
+                    <Group name="PrimaryAudience">security</Group>
+                    <Group name="RemediationEffort">1.0</Group>
+                    <Group name="audience">broad</Group>
+				</MetaInfo>
+                <VulnKingdom>Security Features</VulnKingdom>
+                <VulnCategory>Mulesoft Misconfiguration</VulnCategory>
+                <VulnSubcategory>MySQL - hardcoded database host</VulnSubcategory>
+                <DefaultSeverity>2.0</DefaultSeverity>
+                <Description>
+					<Abstract>MySQL - The database host name should not be a hardcoded value.</Abstract>
+                </Description>
+	            <ConfigFile type="xml">
+	                <Pattern>(.*)\.xml</Pattern>
+	            </ConfigFile>
+                <XPathMatch expression="count(//*:mule/db:config/db:my-sql-connection) > 0 and not(matches(//*:mule/db:config/db:my-sql-connection/@host, '^\$\{.*\}$'))"
+                	reporton="//*[local-name()='my-sql-connection']"/>
+            </ConfigurationRule> 
+            <ConfigurationRule formatVersion="20.1">
+				<RuleID>9a4e8390-cacc-11ec-9d64-0242ac120002</RuleID>
+				<MetaInfo>
+					<Group name="Accuracy">4.0</Group>
+                    <Group name="Impact">4.0</Group>
+                    <Group name="Probability">3.0</Group>
+                    <Group name="PrimaryAudience">security</Group>
+                    <Group name="RemediationEffort">1.0</Group>
+                    <Group name="audience">broad</Group>
+				</MetaInfo>
+                <VulnKingdom>Security Features</VulnKingdom>
+                <VulnCategory>Mulesoft Misconfiguration</VulnCategory>
+                <VulnSubcategory>MySQL - hardcoded password</VulnSubcategory>
+                <DefaultSeverity>5.0</DefaultSeverity>
+                <Description>
+					<Abstract>MySQL - The password should not be a hardcoded value.</Abstract>
+                </Description>
+	            <ConfigFile type="xml">
+	                <Pattern>(.*)\.xml</Pattern>
+	            </ConfigFile>
+                <XPathMatch expression="count(//*:mule/db:config/db:my-sql-connection) > 0 and not(matches(//*:mule/db:config/db:my-sql-connection/@password, '^\$\{.*\}$'))"
+                	reporton="//*[local-name()='my-sql-connection']"/>
+            </ConfigurationRule>       
+        </RuleDefinitions>
+    </Rules>
+</RulePack>
