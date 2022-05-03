@@ -1,17 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
-http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:spring="http://www.mulesoft.org/schema/mule/spring"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/spring http://www.mulesoft.org/schema/mule/spring/current/mule-spring.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
     
     <configuration-properties file="ports.yaml"/>
     
+    <spring:config name="products-api-springConfig" files="beans.xml" />
+    
+    <spring:security-manager>
+   		<spring:delegate-security-provider
+      		name="memory-provider"
+      		delegate-ref="authenticationManager" />
+  	</spring:security-manager>  
     
     <http:listener-config name="products-api-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="${http.port}" protocol="HTTP" />
     </http:listener-config>
     <apikit:config name="products-api-routerConfig" raml="products-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <db:config name="products-api-dbConfig" doc:name="Database Config" doc:id="b8cf02ea-e0e3-4aea-9aa1-e002178c6cf7" >
-		<db:my-sql-connection host="localhost" port="3306" user="fortifymule" password="fortifymule" database="fortifymule" />
-	
+		<db:my-sql-connection host="localhost" port="3306" user="fortifymule" password="fortifymule" database="fortifymule" >
+			<db:connection-properties >
+				<db:connection-property key="useSSL" value="false" />
+			</db:connection-properties>
+		</db:my-sql-connection>
 	</db:config>
 	
 	<flow name="products-main">
@@ -24,6 +37,9 @@ http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/cu
                 <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:error-response>
         </http:listener>
+    	<http:basic-security-filter realm="mule" />
+      	<spring:authorization-filter requiredAuthorities="ROLE_ADMIN" />
+      	<logger level="INFO" doc:name="Logger" message="Basic Authentication Successful"/>
         <apikit:router config-ref="products-api-routerConfig" />
         <error-handler>
             <on-error-propagate type="APIKIT:BAD_REQUEST">
@@ -104,7 +120,21 @@ output application/json
                     </ee:variables>
                 </ee:transform>
             </on-error-propagate>
-        </error-handler>
+			<on-error-propagate type="HTTP:BASIC_AUTHENTICATION">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Unauthorized: username or password or the combination is invalid"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">401</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>    
+			</on-error-propagate>
+        
+</error-handler>
     </flow>
     <flow name="products-console">
         <http:listener config-ref="products-api-httpListenerConfig" path="/console/*">
@@ -133,22 +163,23 @@ output application/json
             </on-error-propagate>
         </error-handler>
     </flow>
-    <flow name="get:\products\(productId):products-api-routerConfig">
-        <db:select doc:name="Select" doc:id="a16cf67a-ee30-45ba-84a3-06ac952117ae" config-ref="products-api-dbConfig" queryTimeoutUnit="MILLISECONDS">
-			<db:sql ><![CDATA[SELECT *, BIN_TO_UUID(id) as uuid FROM fortifymule.products WHERE id = UUID_TO_BIN(:id)]]></db:sql>
-			<db:input-parameters ><![CDATA[#[{'id' : attributes.uriParams.productId}]]]></db:input-parameters>
+        <flow name="get:\products:products-api-routerConfig">
+        <db:select doc:name="Select" doc:id="58a1a27a-cad0-11ec-9d64-0242ac120002" config-ref="products-api-dbConfig" queryTimeoutUnit="MILLISECONDS">
+			<db:sql ><![CDATA[SELECT *, BIN_TO_UUID(id) as uuid FROM fortifymule.products]]></db:sql>
 		</db:select>
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="e08e9347-9446-455a-a462-4485e38e5ed0">
             <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0 // The version
-output application/json // The mime-type of the output
-var product = payload[0] // Setting a variable called product with a value of the first item of query's payload
+                <ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+import dw::core::Objects
 ---
-{
-	brand: product.branc default "",
+payload map ((product, indexOfProduct) -> {
+	brand: product.brand default "",
 	model: product.name default "",
 	identifier: product.uuid,
-//	identifiers: read(product.id default "[]","application/json"), // Parsing this string to a JSON object. If null, defaults to empty array to avoid a null exception.
+	identifiers: [{
+		SKU: product.code
+	}],
 	price: {
 		amount: {
 			name: "Amount",
@@ -163,9 +194,45 @@ var product = payload[0] // Setting a variable called product with a value of th
 	rating: product.rating,
 	summary: product.summary,
 	description: product.description,
-//	model: product.model,
-//	brand: product.brand,
-//	pictures: read(product.image default "[]","application/json") // Parsing this string to a JSON object. If null, defaults to empty array to avoid a null exception.
+	pictures: [{}] // TBD
+})]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="get:\products\(productId):products-api-routerConfig">
+        <db:select doc:name="Select" doc:id="a16cf67a-ee30-45ba-84a3-06ac952117ae" config-ref="products-api-dbConfig" queryTimeoutUnit="MILLISECONDS">
+			<db:sql ><![CDATA[SELECT *, BIN_TO_UUID(id) as uuid FROM fortifymule.products WHERE id = UUID_TO_BIN(:id)]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{'id' : attributes.uriParams.productId}]]]></db:input-parameters>
+		</db:select>
+        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="e08e9347-9446-455a-a462-4485e38e5ed0">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0 // The version
+output application/json // The mime-type of the output
+var product = payload[0] // Setting a variable called product with a value of the first item of query's payload
+---
+{
+	brand: product.brand default "",
+	model: product.name default "",
+	identifier: product.uuid,
+	identifiers: [{
+		SKU: product.code
+	}],
+	price: {
+		amount: {
+			name: "Amount",
+			currencyValue: product.price,
+			currency: product.currency default "GBP"
+		},
+		salesUnit: {
+			code: "EA",
+			name: "Each"
+		}
+	},
+	rating: product.rating,
+	summary: product.summary,
+	description: product.description,
+	pictures: [{}] // TBD
 }]]></ee:set-payload>
             </ee:message>
         </ee:transform>
