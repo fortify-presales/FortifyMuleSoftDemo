@@ -6,11 +6,62 @@
 	},
 	"item": [
 		{
-			"name": "New Request",
+			"name": "Get Products",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"JSON data returned\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData[0].identifier).exist;\r",
+							"    console.log('Saving product identifier as product_id variable: ' + jsonData[0].identifier)\r",
+							"    pm.variables.set('product_id', jsonData[0].identifier)\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"strictSSL": false
+			},
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": "http://localhost:8081/api/products/15de1efe-8023-11ec-b127-00155d4daa32"
+				"url": "{{app_url}}/products"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Single Product",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"JSON data returned\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.identifier).exist;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"strictSSL": false
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "{{app_url}}/products/{{product_id}}"
 			},
 			"response": []
 		}
@@ -40,6 +91,18 @@
 					""
 				]
 			}
+		}
+	],
+	"variable": [
+		{
+			"key": "app_url",
+			"value": "https://localhost:8082/api",
+			"type": "string"
+		},
+		{
+			"key": "product_id",
+			"value": "2fbe438b-cac1-11ec-88c5-c03ebaa967d7",
+			"type": "string"
 		}
 	]
 }
