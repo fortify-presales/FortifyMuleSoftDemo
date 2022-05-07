@@ -34,7 +34,7 @@
 				<RuleID>F9D509B9-2BC8-4EFE-B1EC-5205B11C3B20</RuleID>
 				<MetaInfo>
 					<Group name="Accuracy">4.0</Group>
-                    <Group name="Impact">2.0</Group>
+                    <Group name="Impact">4.0</Group>
                     <Group name="Probability">3.0</Group>
                     <Group name="PrimaryAudience">security</Group>
                     <Group name="RemediationEffort">1.0</Group>
@@ -57,7 +57,7 @@
 				<RuleID>ff8867a4-cacb-11ec-9d64-0242ac120002</RuleID>
 				<MetaInfo>
 					<Group name="Accuracy">4.0</Group>
-                    <Group name="Impact">2.0</Group>
+                    <Group name="Impact">4.0</Group>
                     <Group name="Probability">3.0</Group>
                     <Group name="PrimaryAudience">security</Group>
                     <Group name="RemediationEffort">1.0</Group>
@@ -80,8 +80,8 @@
 				<RuleID>9a4e8390-cacc-11ec-9d64-0242ac120002</RuleID>
 				<MetaInfo>
 					<Group name="Accuracy">4.0</Group>
-                    <Group name="Impact">4.0</Group>
-                    <Group name="Probability">3.0</Group>
+                    <Group name="Impact">5.0</Group>
+                    <Group name="Probability">4.0</Group>
                     <Group name="PrimaryAudience">security</Group>
                     <Group name="RemediationEffort">1.0</Group>
                     <Group name="audience">broad</Group>

@@ -1,25 +1,15 @@
 {
-                    "brand": "Metapax",
-                    "identifier": "15de1efe-8023-11ec-b127-00155d4daa32",
-                    "identifiers": [{
-                      "SKU": "UGG-BB-PUR-06"
-                    }],
-                    "model": "Smart Slim Micro Stripe Shirt",
-                    "rating": 5,
-                    "description": "Shirt by ASOS Tall. Stripe woven fabric. Added stretch for comfort. Spread collar. Button placket. Slim fit - cut close to the body. Machine wash. 98% Cotton, 2% Elastane. Our model wears a size Medium Long and is 193cm/6'4\" tall",
-                    "pictures": [
-                      "https://launderkart.com/wp-content/uploads/2016/07/Shirt.jpg",
-                      "https://cdni.llbean.net/is/image/wim/251423_47_41?wid=428&hei=494"
-                    ],
-                    "price": {
-                      "amount": {
-                        "currency": "USD",
-                        "currencyValue": 34.90,
-                        "name": "Amount"
-                      },
-                        "salesUnit": {
-                        "code": "EA",
-                        "name": "Each"
-                      }
-                    }
+  "id": "eec467c8-5de9-4c7c-8541-7b31614d31a0",
+  "code": "SWA234-A568-00010",
+  "name": "Solodox 750",
+  "summary": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin pharetra enim erat, sed tempor mauris viverra in. Donec ante diam, rhoncus dapibus efficitur ut, sagittis a elit. Integer non ante felis. Curabitur nec lectus ut velit bibendum euismod. Nulla mattis convallis neque ac euismod. Ut vel mattis lorem, nec tempus nibh. Vivamus tincidunt enim a risus placerat viverra. Curabitur diam sapien, posuere dignissim accumsan sed, tempus sit amet diam. Aliquam tincidunt vitae quam non rutrum. Nunc id sollicitudin neque, at posuere metus. Sed interdum ex erat, et ornare purus bibendum id. Suspendisse sagittis est dui. Donec vestibulum elit at arcu feugiat porttitor.",
+  "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin pharetra enim erat, sed tempor mauris viverra in. Donec ante diam, rhoncus dapibus efficitur ut, sagittis a elit. Integer non ante felis. Curabitur nec lectus ut velit bibendum euismod. Nulla mattis convallis neque ac euismod. Ut vel mattis lorem, nec tempus nibh. Vivamus tincidunt enim a risus placerat viverra. Curabitur diam sapien, posuere dignissim accumsan sed, tempus sit amet diam. Aliquam tincidunt vitae quam non rutrum. Nunc id sollicitudin neque, at posuere metus. Sed interdum ex erat, et ornare purus bibendum id. Suspendisse sagittis est dui. Donec vestibulum elit at arcu feugiat porttitor.",
+  "image": "generic-product-4.jpg",
+  "price": 12.95,
+  "onSale": false,
+  "salePrice": 0,
+  "inStock": true,
+  "timeToStock": 30,
+  "rating": 4,
+  "available": true
 }

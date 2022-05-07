@@ -23,5 +23,9 @@
       </ss:user-service>
     </ss:authentication-provider>
   </ss:authentication-manager>
+  
+  <!--spring:beans>
+    <spring:bean id="stockService" class="com.microfocus.example.StockService"/>
+ </spring:beans-->
 
 </beans>

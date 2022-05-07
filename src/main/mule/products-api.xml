@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
-	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:spring="http://www.mulesoft.org/schema/mule/spring"
-	xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+<mule xmlns:java="http://www.mulesoft.org/schema/mule/java"
+	xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:spring="http://www.mulesoft.org/schema/mule/spring" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
 http://www.mulesoft.org/schema/mule/spring http://www.mulesoft.org/schema/mule/spring/current/mule-spring.xsd
-http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd">
     
-    <configuration-properties file="ports.yaml"/>
+    <configuration-properties file="configuration.yaml"/>
     
     <spring:config name="products-api-springConfig" files="beans.xml" />
     
@@ -18,8 +20,9 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
     
     <http:listener-config name="products-api-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="${https.port}" protocol="HTTPS">
-          <tls:context>
-            <tls:key-store type="pkcs12" path="ssl/server-dev-keystore.p12" alias="server" keyPassword="password" password="password" />
+          <tls:context name="serverTlscontext" enabledProtocols="TLSv1.2">
+            <tls:trust-store type="jceks" insecure="true"/>
+				<tls:key-store type="pkcs12" path="ssl/server-dev-keystore.p12" alias="server" keyPassword="password" password="password" />
           </tls:context>
         </http:listener-connection>
     </http:listener-config>
@@ -174,32 +177,24 @@ output application/json
 		</db:select>
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="e08e9347-9446-455a-a462-4485e38e5ed0">
             <ee:message>
-                <ee:set-payload ><![CDATA[%dw 2.0
-output application/json
-import dw::core::Objects
+                <ee:set-payload ><![CDATA[%dw 2.0 // The version
+output application/json // The mime-type of the output
+var baseIndex = "https://iwa.mfdemouk.com/images/"
 ---
 payload map ((product, indexOfProduct) -> {
-	brand: product.brand default "",
-	model: product.name default "",
-	identifier: product.uuid,
-	identifiers: [{
-		SKU: product.code
-	}],
-	price: {
-		amount: {
-			name: "Amount",
-			currencyValue: product.price,
-			currency: product.currency default "GBP"
-		},
-		salesUnit: {
-			code: "EA",
-			name: "Each"
-		}
-	},
-	rating: product.rating,
+	id: product.uuid,
+	code: product.code,
+	name: product.name,
 	summary: product.summary,
 	description: product.description,
-	pictures: [{}] // TBD
+	image: product.image,
+	price: product.price,
+	onSale: product.on_sale,
+	salePrice: product.sale_price,
+	inStock: product.in_stock,
+	timeToStock: product.time_to_stock,
+	rating: product.rating,
+	available: product.available
 })]]></ee:set-payload>
             </ee:message>
         </ee:transform>
@@ -215,30 +210,42 @@ http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/cu
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0 // The version
 output application/json // The mime-type of the output
+var baseIndex = "https://iwa.mfdemouk.com/images/"
 var product = payload[0] // Setting a variable called product with a value of the first item of query's payload
 ---
 {
-	brand: product.brand default "",
-	model: product.name default "",
-	identifier: product.uuid,
-	identifiers: [{
-		SKU: product.code
-	}],
-	price: {
-		amount: {
-			name: "Amount",
-			currencyValue: product.price,
-			currency: product.currency default "GBP"
-		},
-		salesUnit: {
-			code: "EA",
-			name: "Each"
-		}
-	},
-	rating: product.rating,
+	id: product.uuid,
+	code: product.code,
+	name: product.name,
 	summary: product.summary,
 	description: product.description,
-	pictures: [{}] // TBD
+	image: product.image,
+	price: product.price,
+	onSale: product.on_sale,
+	salePrice: product.sale_price,
+	inStock: product.in_stock,
+	timeToStock: product.time_to_stock,
+	rating: product.rating,
+	available: product.available	
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="get:\products\(productId)\stockLevel:products-api-routerConfig">
+        <java:invoke-static method="getStockLevel(java.lang.String)" doc:name="Invoke static" doc:id="36ef32c9-900c-43db-b74e-38f5ef9ee044" class="com.microfocus.example.StockService" target="stockLevel">
+			<java:args ><![CDATA[#[{productId : attributes.uriParams.productId}]]]></java:args>
+		</java:invoke-static>
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd 
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="3ee6e36c-6011-46ee-bcf9-cdaee75d6a07">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0 // The version
+output application/json // The mime-type of the output
+var stock = payload // Setting a variable called stock with payload
+---
+{
+	productId: attributes.uriParams.'productId',
+	quantity: vars.stockLevel	
 }]]></ee:set-payload>
             </ee:message>
         </ee:transform>
