@@ -20,4 +20,13 @@ type: string]]></types:shape>
       </types:output-event>
     </types:processor-declaration>
   </types:enrichment>
+  <types:enrichment select="#0aaa06af-fd70-494a-9700-88d31504b434">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:attributes type="productId"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
 </types:mule>

@@ -18,6 +18,8 @@
     </Appenders>
     <Loggers>
         
+        <AsyncLogger name="org.mule.extension.db" level="DEBUG"/>
+        
         <!-- Http Logger shows wire traffic on DEBUG. -->
         <!--AsyncLogger name="org.mule.service.http.impl.service.HttpMessageLogger" level="DEBUG" /-->
         <AsyncLogger name="org.mule.service.http" level="WARN"/>

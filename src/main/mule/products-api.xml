@@ -47,7 +47,7 @@ http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/
         </http:listener>
     	<http:basic-security-filter realm="mule" />
       	<spring:authorization-filter requiredAuthorities="ROLE_ADMIN" />
-      	<logger level="INFO" doc:name="Logger" message="Basic Authentication Successful"/>
+      	<logger level="DEBUG" doc:name="Logger" message="Basic Authentication Successful"/>
         <apikit:router config-ref="products-api-routerConfig" />
         <error-handler>
             <on-error-propagate type="APIKIT:BAD_REQUEST">
@@ -171,15 +171,14 @@ output application/json
             </on-error-propagate>
         </error-handler>
     </flow>
-        <flow name="get:\products:products-api-routerConfig">
+    <flow name="get:\products:products-api-routerConfig">
         <db:select doc:name="Select" doc:id="58a1a27a-cad0-11ec-9d64-0242ac120002" config-ref="products-api-dbConfig" queryTimeoutUnit="MILLISECONDS">
 			<db:sql ><![CDATA[SELECT *, BIN_TO_UUID(id) as uuid FROM fortifymule.products]]></db:sql>
 		</db:select>
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="e08e9347-9446-455a-a462-4485e38e5ed0">
             <ee:message>
-                <ee:set-payload ><![CDATA[%dw 2.0 // The version
-output application/json // The mime-type of the output
-var baseIndex = "https://iwa.mfdemouk.com/images/"
+                <ee:set-payload ><![CDATA[%dw 2.0
+output application/json
 ---
 payload map ((product, indexOfProduct) -> {
 	id: product.uuid,
@@ -199,6 +198,58 @@ payload map ((product, indexOfProduct) -> {
             </ee:message>
         </ee:transform>
     </flow>
+    
+    <flow name="post:\products:products-api-routerConfig">
+		<set-variable value="#[uuid()]" doc:name="Set Variable" doc:id="d7e834a7-4f0b-4e4e-8a24-1fd3226f1c89" variableName="productId"/>
+		<db:insert doc:name="Insert" doc:id="74ad81cd-3ece-4413-85be-4184f713e8b3" config-ref="products-api-dbConfig" queryTimeoutUnit="MILLISECONDS" target="payload">
+			<db:sql ><![CDATA[INSERT INTO fortifymule.products(id, code, name, summary, description, image, price, on_sale, sale_price, in_stock, time_to_stock, rating, available)
+VALUES(UUID_TO_BIN(:id), :code, :name, :summary, :description, :image, :price, :onSale, :salePrice, :inStock, :timeToStock, :rating, :available)]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	'id' : vars.productId,
+	'code' : payload.code,
+    'name': payload.name,
+    'summary': payload.summary,
+    'description': payload.description,
+    'image': payload.image,
+    'price': payload.price,
+    'onSale': payload.onSale,
+    'salePrice': payload.salePrice,
+    'inStock': payload.inStock,
+    'timeToStock': payload.timeToStock,
+    'rating': payload.rating,
+    'available': payload.available	
+}]]]></db:input-parameters>
+		</db:insert>
+		<db:select doc:name="Select" doc:id="8edba480-cf39-425c-8c21-08c35ea4487c" config-ref="products-api-dbConfig" queryTimeoutUnit="MILLISECONDS" target="payload">
+			<db:sql ><![CDATA[SELECT *, BIN_TO_UUID(id) as uuid FROM fortifymule.products WHERE id = UUID_TO_BIN(:id)]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{'id' : vars.productId }]]]></db:input-parameters>
+		</db:select>
+  		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd 
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="9c7f815c-9762-41ce-b160-4f33123a86b6">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0 
+output application/json
+---
+{
+	id: vars.productId,
+	code: payload.code,
+	name: payload.name,
+	summary: payload.summary,
+	description: payload.description,
+	image: payload.image,
+	price: payload.price,
+	onSale: payload.on_sale,
+	salePrice: payload.sale_price,
+	inStock: payload.in_stock,
+	timeToStock: payload.time_to_stock,
+	rating: payload.rating,
+	available: payload.available	
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    
     <flow name="get:\products\(productId):products-api-routerConfig">
         <db:select doc:name="Select" doc:id="a16cf67a-ee30-45ba-84a3-06ac952117ae" config-ref="products-api-dbConfig" queryTimeoutUnit="MILLISECONDS">
 			<db:sql ><![CDATA[SELECT *, BIN_TO_UUID(id) as uuid FROM fortifymule.products WHERE id = UUID_TO_BIN(:id)]]></db:sql>
@@ -208,10 +259,9 @@ payload map ((product, indexOfProduct) -> {
 http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd 
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="e08e9347-9446-455a-a462-4485e38e5ed0">
             <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0 // The version
-output application/json // The mime-type of the output
-var baseIndex = "https://iwa.mfdemouk.com/images/"
-var product = payload[0] // Setting a variable called product with a value of the first item of query's payload
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json 
+var product = payload[0]
 ---
 {
 	id: product.uuid,
@@ -231,6 +281,73 @@ var product = payload[0] // Setting a variable called product with a value of th
             </ee:message>
         </ee:transform>
     </flow>
+    
+    <flow name="put:\products\(productId):products-api-routerConfig">
+        <set-variable value="attributes.uriParams.productId" doc:name="Set Variable" doc:id="ab220cd8-e238-4173-84e7-8f8c2f548d68" variableName="productId"/>
+		<db:update doc:name="Update" doc:id="3f0f0cda-d9cf-4cd5-9dc1-c5149adb264f" config-ref="products-api-dbConfig" queryTimeoutUnit="MILLISECONDS" target="payload">
+			<db:sql ><![CDATA[UPDATE fortifymule.products SET code = :code, name = :name, summary = :summary, description = :description, image = :image, price = :price, on_sale = :onSale, sale_price = :salePrice, in_stock = :inStock, time_to_stock = :timeToStock, rating = :rating, available = :available
+WHERE id = UUID_TO_BIN(:id)]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	'id' : attributes.uriParams.productId,
+	'code' : payload.code,
+    'name': payload.name,
+    'summary': payload.summary,
+    'description': payload.description,
+    'image': payload.image,
+    'price': payload.price,
+    'onSale': payload.onSale,
+    'salePrice': payload.salePrice,
+    'inStock': payload.inStock,
+    'timeToStock': payload.timeToStock,
+    'rating': payload.rating,
+    'available': payload.available	
+}]]]></db:input-parameters>
+		</db:update>
+		<db:select doc:name="Select" doc:id="b40ac26b-abb0-484d-b681-c6ecc4acab23" config-ref="products-api-dbConfig" queryTimeoutUnit="MILLISECONDS" target="payload">
+			<db:sql ><![CDATA[SELECT *, BIN_TO_UUID(id) as uuid FROM fortifymule.products WHERE id = UUID_TO_BIN(:id)]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{'id' : attributes.uriParams.productId}]]]></db:input-parameters>
+		</db:select>
+  		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd 
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="0aaa06af-fd70-494a-9700-88d31504b434">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0 
+output application/json
+---
+{
+	id: attributes.uriParams.productId,
+	code: payload.code,
+	name: payload.name,
+	summary: payload.summary,
+	description: payload.description,
+	image: payload.image,
+	price: payload.price,
+	onSale: payload.on_sale,
+	salePrice: payload.sale_price,
+	inStock: payload.in_stock,
+	timeToStock: payload.time_to_stock,
+	rating: payload.rating,
+	available: payload.available	
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    
+    <flow name="delete:\products\(productId):products-api-routerConfig">
+  		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd 
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="b1f241eb-50c5-4cb7-8820-90913f885d8b">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+// the response is hardcoded for new
+---
+{
+	message: "The product was deleted"
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
     <flow name="get:\products\(productId)\stockLevel:products-api-routerConfig">
         <java:invoke-static method="getStockLevel(java.lang.String)" doc:name="Invoke static" doc:id="36ef32c9-900c-43db-b74e-38f5ef9ee044" class="com.microfocus.example.StockService" target="stockLevel">
 			<java:args ><![CDATA[#[{productId : attributes.uriParams.productId}]]]></java:args>
@@ -239,9 +356,8 @@ var product = payload[0] // Setting a variable called product with a value of th
 http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd 
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="3ee6e36c-6011-46ee-bcf9-cdaee75d6a07">
             <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0 // The version
-output application/json // The mime-type of the output
-var stock = payload // Setting a variable called stock with payload
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
 ---
 {
 	productId: attributes.uriParams.'productId',

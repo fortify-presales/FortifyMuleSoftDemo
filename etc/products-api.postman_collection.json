@@ -17,9 +17,9 @@
 							"});\r",
 							"pm.test(\"JSON data returned\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
-							"    pm.expect(jsonData[0].identifier).exist;\r",
-							"    console.log('Saving product identifier as product_id variable: ' + jsonData[0].identifier)\r",
-							"    pm.variables.set('product_id', jsonData[0].identifier)\r",
+							"    pm.expect(jsonData[0].id).exist;\r",
+							"    console.log('Saving product id as product_id variable: ' + jsonData[0].id)\r",
+							"    pm.variables.set('product_id', jsonData[0].id)\r",
 							"});"
 						],
 						"type": "text/javascript"
@@ -37,6 +37,24 @@
 			"response": []
 		},
 		{
+			"name": "Create Product",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"code\": \"SWA234-A568-00011\",\r\n    \"name\": \"Solodox 751\",\r\n    \"summary\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin pharetra enim erat, sed tempor mauris viverra in. Donec ante diam, rhoncus dapibus efficitur ut, sagittis a elit. Integer non ante felis. Curabitur nec lectus ut velit bibendum euismod. Nulla mattis convallis neque ac euismod. Ut vel mattis lorem, nec tempus nibh. Vivamus tincidunt enim a risus placerat viverra. Curabitur diam sapien, posuere dignissim accumsan sed, tempus sit amet diam. Aliquam tincidunt vitae quam non rutrum. Nunc id sollicitudin neque, at posuere metus. Sed interdum ex erat, et ornare purus bibendum id. Suspendisse sagittis est dui. Donec vestibulum elit at arcu feugiat porttitor.\",\r\n    \"description\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin pharetra enim erat, sed tempor mauris viverra in. Donec ante diam, rhoncus dapibus efficitur ut, sagittis a elit. Integer non ante felis. Curabitur nec lectus ut velit bibendum euismod. Nulla mattis convallis neque ac euismod. Ut vel mattis lorem, nec tempus nibh. Vivamus tincidunt enim a risus placerat viverra. Curabitur diam sapien, posuere dignissim accumsan sed, tempus sit amet diam. Aliquam tincidunt vitae quam non rutrum. Nunc id sollicitudin neque, at posuere metus. Sed interdum ex erat, et ornare purus bibendum id. Suspendisse sagittis est dui. Donec vestibulum elit at arcu feugiat porttitor.\",\r\n    \"image\": \"generic-product-4.jpg\",\r\n    \"price\": 12.949999809265137,\r\n    \"onSale\": false,\r\n    \"salePrice\": 0.0,\r\n    \"inStock\": true,\r\n    \"timeToStock\": 30,\r\n    \"rating\": 4,\r\n    \"available\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{app_url}}/products"
+			},
+			"response": []
+		},
+		{
 			"name": "Get Single Product",
 			"event": [
 				{
@@ -48,7 +66,7 @@
 							"});\r",
 							"pm.test(\"JSON data returned\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
-							"    pm.expect(jsonData.identifier).exist;\r",
+							"    pm.expect(jsonData.id).exist;\r",
 							"});"
 						],
 						"type": "text/javascript"
@@ -71,6 +89,33 @@
 				"method": "GET",
 				"header": [],
 				"url": "{{app_url}}/products/{{product_id}}/stockLevel"
+			},
+			"response": []
+		},
+		{
+			"name": "Update Product",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"{{product_id}}\",\r\n    \"code\": \"SWA234-A568-00010\",\r\n    \"name\": \"Solodox 750\",\r\n    \"summary\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin pharetra enim erat, sed tempor mauris viverra in. Donec ante diam, rhoncus dapibus efficitur ut, sagittis a elit. Integer non ante felis. Curabitur nec lectus ut velit bibendum euismod. Nulla mattis convallis neque ac euismod. Ut vel mattis lorem, nec tempus nibh. Vivamus tincidunt enim a risus placerat viverra. Curabitur diam sapien, posuere dignissim accumsan sed, tempus sit amet diam. Aliquam tincidunt vitae quam non rutrum. Nunc id sollicitudin neque, at posuere metus. Sed interdum ex erat, et ornare purus bibendum id. Suspendisse sagittis est dui. Donec vestibulum elit at arcu feugiat porttitor.\",\r\n    \"description\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin pharetra enim erat, sed tempor mauris viverra in. Donec ante diam, rhoncus dapibus efficitur ut, sagittis a elit. Integer non ante felis. Curabitur nec lectus ut velit bibendum euismod. Nulla mattis convallis neque ac euismod. Ut vel mattis lorem, nec tempus nibh. Vivamus tincidunt enim a risus placerat viverra. Curabitur diam sapien, posuere dignissim accumsan sed, tempus sit amet diam. Aliquam tincidunt vitae quam non rutrum. Nunc id sollicitudin neque, at posuere metus. Sed interdum ex erat, et ornare purus bibendum id. Suspendisse sagittis est dui. Donec vestibulum elit at arcu feugiat porttitor.\",\r\n    \"image\": \"generic-product-4.jpg\",\r\n    \"price\": 12.949999809265137,\r\n    \"onSale\": false,\r\n    \"salePrice\": 0.0,\r\n    \"inStock\": true,\r\n    \"timeToStock\": 30,\r\n    \"rating\": 4,\r\n    \"available\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{app_url}}/products/{{product_id}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Product",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": "{{app_url}}/products/{{product_id}}"
 			},
 			"response": []
 		}

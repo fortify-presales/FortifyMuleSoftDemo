@@ -16,6 +16,7 @@ $ScanSwitches = ""
 # Test we have Fortify installed successfully
 Test-Environment
 if ([string]::IsNullOrEmpty($AppName)) { throw "Application Name has not been set" }
+if ([string]::IsNullOrEmpty($AppVersion)) { throw "Application Version has not been set" }
 
 # Run the translation and scan
 Write-Host Running translation and scan...
@@ -28,12 +29,12 @@ Write-Host Running translation and scan...
 # summarise issue count by analyzer
 & fprutility -information -analyzerIssueCounts -listIssues -project "$($AppName).fpr"
 
-#Write-Host Generating PDF report...
-#& ReportGenerator '-Dcom.fortify.sca.ProjectRoot=.fortify' -user "Demo User" -format pdf -f "$($AppName).pdf" -source "$($AppName).fpr"
+Write-Host Generating PDF report...
+& ReportGenerator '-Dcom.fortify.sca.ProjectRoot=.fortify' -user "Demo User" -format pdf -f "$($AppName).pdf" -source "$($AppName).fpr"
 
-#if (![string]::IsNullOrEmpty($SSCUrl)) {
-#    Write-Host Uploading results to SSC...
-#    & fortifyclient uploadFPR -file "$($AppName).fpr" -url $SSCUrl -authtoken $SSCAuthToken -application $AppName -applicationVersion $AppVersion
-#}
+if (![string]::IsNullOrEmpty($SSCUrl)) {
+    Write-Host Uploading results to SSC to $AppName version $AppVersion ...
+    & fortifyclient uploadFPR -file "$($AppName).fpr" -url $SSCUrl -authtoken $SSCAuthToken -application $AppName -applicationVersion $AppVersion
+}
 
 Write-Host Done.
