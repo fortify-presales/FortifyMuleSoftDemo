@@ -21,7 +21,7 @@
                     <Group name="audience">broad</Group>
 				</MetaInfo>
                 <VulnKingdom>Security Features</VulnKingdom>
-                <VulnCategory>Mulesoft Misconfiguration</VulnCategory>
+                <VulnCategory>MuleSoft Misconfiguration</VulnCategory>
                 <VulnSubcategory>HTTPS not required</VulnSubcategory>
                 <DefaultSeverity>2.0</DefaultSeverity>
                 <Description>
@@ -43,7 +43,7 @@
                     <Group name="audience">broad</Group>
 				</MetaInfo>
                 <VulnKingdom>Security Features</VulnKingdom>
-                <VulnCategory>Mulesoft Misconfiguration</VulnCategory>
+                <VulnCategory>MuleSoft Misconfiguration</VulnCategory>
                 <VulnSubcategory>HTTP(S) port not configured</VulnSubcategory>
                 <DefaultSeverity>2.0</DefaultSeverity>
                 <Description>
@@ -66,7 +66,7 @@
                     <Group name="audience">broad</Group>
 				</MetaInfo>
                 <VulnKingdom>Security Features</VulnKingdom>
-                <VulnCategory>Mulesoft Misconfiguration</VulnCategory>
+                <VulnCategory>MuleSoft Bad Practice</VulnCategory>
                 <VulnSubcategory>MySQL - hardcoded database host</VulnSubcategory>
                 <DefaultSeverity>2.0</DefaultSeverity>
                 <Description>
@@ -89,7 +89,7 @@
                     <Group name="audience">broad</Group>
 				</MetaInfo>
                 <VulnKingdom>Security Features</VulnKingdom>
-                <VulnCategory>Mulesoft Misconfiguration</VulnCategory>
+                <VulnCategory>Password Management</VulnCategory>
                 <VulnSubcategory>MySQL - hardcoded password</VulnSubcategory>
                 <DefaultSeverity>5.0</DefaultSeverity>
                 <Description>
@@ -112,8 +112,8 @@
                     <Group name="audience">broad</Group>
 				</MetaInfo>
                 <VulnKingdom>Security Features</VulnKingdom>
-                <VulnCategory>Encryption key should not be logged</VulnCategory>
-                <VulnSubcategory>Encryption key should not be logged</VulnSubcategory>
+                <VulnCategory>MuleSoft Misconfiguration</VulnCategory>
+                <VulnSubcategory>Information Disclosure</VulnSubcategory>
                 <DefaultSeverity>5.0</DefaultSeverity>
                 <Description>
 					<Abstract>Encryption key should not be logged.</Abstract>

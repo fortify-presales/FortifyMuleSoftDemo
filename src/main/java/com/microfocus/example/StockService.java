@@ -3,6 +3,7 @@ package com.microfocus.example;
 import java.util.Random;
 import java.util.UUID;
 
+// Simple Java class to get the "random" stock level for a product.
 public class StockService {
 
 	private final static int MAX_STOCK_LEVEL = 1000;

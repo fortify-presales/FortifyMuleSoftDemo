@@ -7,7 +7,7 @@ protocols: [ HTTP, HTTPS ]
 documentation:
   - title: Home
     content: |
-      This is a prototype product API.
+      This is a prototype Products API.
   - title: Getting Started
     content: |
       TODO
@@ -77,14 +77,14 @@ types:
     body:
       application/json:
         type: product
-        example: !include examples/product.json
+        example: !include examples/product-new-update.json
     responses:
       200:
         body:
           application/json:
             type: product
             examples: 
-              output: !include examples/product.json
+              output: !include examples/product-list.json
       500:
         body:
           application/json:
@@ -127,7 +127,7 @@ types:
     body:
       application/json:
         type: product
-        example: !include examples/product.json
+        example: !include examples/product-new-update.json
     responses:
       200:
         body:
@@ -186,10 +186,11 @@ types:
             example: |
               {
                 "message": "The product could not be updated"
-              }                               
+              }     
+                                        
 /products/{productId}/stockLevel:
   description: | 
-    Get the stock level of a single product
+    Get the stock level of a single product.
   uriParameters:    
     productId: 
       displayName: Product ID
@@ -201,7 +202,7 @@ types:
           application/json:
             type: stock
             examples: 
-              output: !include examples/stock.json
+              output: !include examples/stock-list.json
       404:
         body: 
           application/json:

@@ -303,7 +303,7 @@ WHERE id = UUID_TO_BIN(:id)]]></db:sql>
     'available': payload.available	
 }]]]></db:input-parameters>
 		</db:update>
-		<db:select doc:name="Select" doc:id="b40ac26b-abb0-484d-b681-c6ecc4acab23" config-ref="products-api-dbConfig" queryTimeoutUnit="MILLISECONDS" target="payload">
+		<db:select doc:name="Select" doc:id="b40ac26b-abb0-484d-b681-c6ecc4acab23" config-ref="products-api-dbConfig" queryTimeoutUnit="NANOSECONDS" target="payload">
 			<db:sql ><![CDATA[SELECT *, BIN_TO_UUID(id) as uuid FROM fortifymule.products WHERE id = UUID_TO_BIN(:id)]]></db:sql>
 			<db:input-parameters ><![CDATA[#[{'id' : attributes.uriParams.productId}]]]></db:input-parameters>
 		</db:select>
@@ -334,13 +334,16 @@ output application/json
     </flow>
     
     <flow name="delete:\products\(productId):products-api-routerConfig">
+        <db:delete doc:name="Delete" doc:id="47c46a06-3dfc-4327-9396-696423cad0de" config-ref="products-api-dbConfig" queryTimeoutUnit="MILLISECONDS">
+			<db:sql ><![CDATA[DELETE FROM fortifymule.products WHERE id = UUID_TO_BIN(:id)]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{'id' : attributes.uriParams.productId}]]]></db:input-parameters>
+		</db:delete>
   		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd 
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="b1f241eb-50c5-4cb7-8820-90913f885d8b">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
-// the response is hardcoded for new
 ---
 {
 	message: "The product was deleted"

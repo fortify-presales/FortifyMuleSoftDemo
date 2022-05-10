@@ -38,12 +38,31 @@
 		},
 		{
 			"name": "Create Product",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"JSON data returned\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.id).exist;\r",
+							"    console.log('Saving product id as product_id variable: ' + jsonData.id)\r",
+							"    pm.collectionVariables.set('product_id', jsonData.id);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"code\": \"SWA234-A568-00011\",\r\n    \"name\": \"Solodox 751\",\r\n    \"summary\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin pharetra enim erat, sed tempor mauris viverra in. Donec ante diam, rhoncus dapibus efficitur ut, sagittis a elit. Integer non ante felis. Curabitur nec lectus ut velit bibendum euismod. Nulla mattis convallis neque ac euismod. Ut vel mattis lorem, nec tempus nibh. Vivamus tincidunt enim a risus placerat viverra. Curabitur diam sapien, posuere dignissim accumsan sed, tempus sit amet diam. Aliquam tincidunt vitae quam non rutrum. Nunc id sollicitudin neque, at posuere metus. Sed interdum ex erat, et ornare purus bibendum id. Suspendisse sagittis est dui. Donec vestibulum elit at arcu feugiat porttitor.\",\r\n    \"description\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin pharetra enim erat, sed tempor mauris viverra in. Donec ante diam, rhoncus dapibus efficitur ut, sagittis a elit. Integer non ante felis. Curabitur nec lectus ut velit bibendum euismod. Nulla mattis convallis neque ac euismod. Ut vel mattis lorem, nec tempus nibh. Vivamus tincidunt enim a risus placerat viverra. Curabitur diam sapien, posuere dignissim accumsan sed, tempus sit amet diam. Aliquam tincidunt vitae quam non rutrum. Nunc id sollicitudin neque, at posuere metus. Sed interdum ex erat, et ornare purus bibendum id. Suspendisse sagittis est dui. Donec vestibulum elit at arcu feugiat porttitor.\",\r\n    \"image\": \"generic-product-4.jpg\",\r\n    \"price\": 12.949999809265137,\r\n    \"onSale\": false,\r\n    \"salePrice\": 0.0,\r\n    \"inStock\": true,\r\n    \"timeToStock\": 30,\r\n    \"rating\": 4,\r\n    \"available\": true\r\n}",
+					"raw": "{\r\n    \"code\": \"SWA111-A222-00001\",\r\n    \"name\": \"New product\",\r\n    \"summary\": \"Its summary\",\r\n    \"description\": \"Its description.\",\r\n    \"image\": \"generic-product-1.jpg\",\r\n    \"price\": 10.0,\r\n    \"onSale\": false,\r\n    \"salePrice\": 0.0,\r\n    \"inStock\": true,\r\n    \"timeToStock\": 30,\r\n    \"rating\": 5,\r\n    \"available\": true\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -85,6 +104,23 @@
 		},
 		{
 			"name": "Get Product Stock Level",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"JSON data returned\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.quantity).exist;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -94,12 +130,29 @@
 		},
 		{
 			"name": "Update Product",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"JSON data returned\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.id).exist;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "PUT",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"id\": \"{{product_id}}\",\r\n    \"code\": \"SWA234-A568-00010\",\r\n    \"name\": \"Solodox 750\",\r\n    \"summary\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin pharetra enim erat, sed tempor mauris viverra in. Donec ante diam, rhoncus dapibus efficitur ut, sagittis a elit. Integer non ante felis. Curabitur nec lectus ut velit bibendum euismod. Nulla mattis convallis neque ac euismod. Ut vel mattis lorem, nec tempus nibh. Vivamus tincidunt enim a risus placerat viverra. Curabitur diam sapien, posuere dignissim accumsan sed, tempus sit amet diam. Aliquam tincidunt vitae quam non rutrum. Nunc id sollicitudin neque, at posuere metus. Sed interdum ex erat, et ornare purus bibendum id. Suspendisse sagittis est dui. Donec vestibulum elit at arcu feugiat porttitor.\",\r\n    \"description\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin pharetra enim erat, sed tempor mauris viverra in. Donec ante diam, rhoncus dapibus efficitur ut, sagittis a elit. Integer non ante felis. Curabitur nec lectus ut velit bibendum euismod. Nulla mattis convallis neque ac euismod. Ut vel mattis lorem, nec tempus nibh. Vivamus tincidunt enim a risus placerat viverra. Curabitur diam sapien, posuere dignissim accumsan sed, tempus sit amet diam. Aliquam tincidunt vitae quam non rutrum. Nunc id sollicitudin neque, at posuere metus. Sed interdum ex erat, et ornare purus bibendum id. Suspendisse sagittis est dui. Donec vestibulum elit at arcu feugiat porttitor.\",\r\n    \"image\": \"generic-product-4.jpg\",\r\n    \"price\": 12.949999809265137,\r\n    \"onSale\": false,\r\n    \"salePrice\": 0.0,\r\n    \"inStock\": true,\r\n    \"timeToStock\": 30,\r\n    \"rating\": 4,\r\n    \"available\": true\r\n}",
+					"raw": "{\r\n    \"id\": \"{{product_id}}\",\r\n    \"code\": \"SWA111-A222-00002\",\r\n    \"name\": \"Updated product\",\r\n    \"summary\": \"Its updated summary\",\r\n    \"description\": \"Its updated description.\",\r\n    \"image\": \"generic-product-1.jpg\",\r\n    \"price\": 10.0,\r\n    \"onSale\": false,\r\n    \"salePrice\": 0.0,\r\n    \"inStock\": true,\r\n    \"timeToStock\": 30,\r\n    \"rating\": 5,\r\n    \"available\": true\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -112,6 +165,19 @@
 		},
 		{
 			"name": "Delete Product",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "DELETE",
 				"header": [],
@@ -155,7 +221,7 @@
 		},
 		{
 			"key": "product_id",
-			"value": "2fbe438b-cac1-11ec-88c5-c03ebaa967d7",
+			"value": "f9a014f8-843c-4fb3-89e9-4edf15c7def9",
 			"type": "string"
 		}
 	]
