@@ -18,7 +18,7 @@ http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/
       		delegate-ref="authenticationManager" />
   	</spring:security-manager>  
        
-    <!-- Example HTTP listener using application configuration - comment out domain listener above if using -->
+    <!-- Example HTTP listener using application configuration -->
     <!-- http:listener-config name="products-api-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="${https.port}" protocol="HTTPS">
           <tls:context name="serverTlscontext" enabledProtocols="TLSv1.2">
