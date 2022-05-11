@@ -146,7 +146,53 @@
 	            </ConfigFile>
                 <XPathMatch expression="count(//*:mule/api-platform-gw:api) = 1 and (//*:mule/api-platform-gw:api/@create = true)"
                 	reporton="//*[local-name()='api-platform-gw:ap']"/>
+            </ConfigurationRule>
+			<ConfigurationRule formatVersion="20.1">
+				<RuleID>b1088ff6-4287-455d-87d7-47929e6eae12</RuleID>
+				<MetaInfo>
+					<Group name="Accuracy">4.0</Group>
+                    <Group name="Impact">5.0</Group>
+                    <Group name="Probability">4.0</Group>
+                    <Group name="PrimaryAudience">security</Group>
+                    <Group name="RemediationEffort">1.0</Group>
+                    <Group name="audience">broad</Group>
+				</MetaInfo>
+                <VulnKingdom>Security Features</VulnKingdom>
+                <VulnCategory>MuleSoft Misconfiguration</VulnCategory>
+                <VulnSubcategory>Application - Insecure Trust Store</VulnSubcategory>
+                <DefaultSeverity>5.0</DefaultSeverity>
+                <Description>
+					<Abstract>The application's Trust Store configuration should not have the insecure attribute.</Abstract>
+                </Description>
+	            <ConfigFile type="xml">
+	                <Pattern>(.*)\.xml</Pattern>
+	            </ConfigFile>
+				<XPathMatch expression="//*:mule/http:listener-config//tls:context/tls:trust-store[namespace-uri()='http://www.mulesoft.org/schema/mule/tls' and (@insecure='true')]"
+                	reporton="//*[local-name()='trust-store']"/>
             </ConfigurationRule>  
+            <ConfigurationRule formatVersion="20.1">
+				<RuleID>a4a4991d-184d-4f5f-a3a2-a8b8f24479f4</RuleID>
+				<MetaInfo>
+					<Group name="Accuracy">4.0</Group>
+                    <Group name="Impact">5.0</Group>
+                    <Group name="Probability">4.0</Group>
+                    <Group name="PrimaryAudience">security</Group>
+                    <Group name="RemediationEffort">1.0</Group>
+                    <Group name="audience">broad</Group>
+				</MetaInfo>
+                <VulnKingdom>Security Features</VulnKingdom>
+                <VulnCategory>MuleSoft Misconfiguration</VulnCategory>
+                <VulnSubcategory>Application - Hardcoded Key Store configuration</VulnSubcategory>
+                <DefaultSeverity>5.0</DefaultSeverity>
+                <Description>
+					<Abstract>The applications's Key Store Configuration should use a configurable path.</Abstract>
+                </Description>
+	            <ConfigFile type="xml">
+	                <Pattern>(.*)\.xml</Pattern>
+	            </ConfigFile>
+                <XPathMatch expression="(//*:mule/http:listener-config//tls:context/tls:key-store) and not(matches(//*:mule/http:listener-config//tls:context/tls:key-store/@path, '^\$\{.*\}$'))"
+                	reporton="//*[local-name()='tls:key-store']"/>
+            </ConfigurationRule>  			
             <ConfigurationRule formatVersion="20.1">
 				<RuleID>3f619683-1718-482b-ba51-b54bf015c00d</RuleID>
 				<MetaInfo>
@@ -158,16 +204,16 @@
                     <Group name="audience">broad</Group>
 				</MetaInfo>
                 <VulnKingdom>Security Features</VulnKingdom>
-                <VulnCategory>Domain - Key Store</VulnCategory>
-                <VulnSubcategory>Domain - Key Store Configuration should use a configurable path</VulnSubcategory>
+                <VulnCategory>MuleSoft Misconfiguration</VulnCategory>
+                <VulnSubcategory>Domain - Hardcoded Key Store configuration</VulnSubcategory>
                 <DefaultSeverity>5.0</DefaultSeverity>
                 <Description>
-					<Abstract>Domain - Key Store Configuration should use a configurable path.</Abstract>
+					<Abstract>The domain's Key Store Configuration should use a configurable path.</Abstract>
                 </Description>
 	            <ConfigFile type="xml">
 	                <Pattern>(.*)\.xml</Pattern>
 	            </ConfigFile>
-                <XPathMatch expression="count(//*:mule/domain:mule-domain/tls:context/tls:key-store) = count(matches(//*:mule/domain:mule-domain/tls:context/tls:key-store/@path, '^\$\{.*\}$'))"
+                <XPathMatch expression="(//*:mule-domain//tls:context/tls:key-store) and not(matches(//*:mule-domain/tls:context/tls:key-store/@path, '^\$\{.*\}$'))"
                 	reporton="//*[local-name()='tls:key-store']"/>
             </ConfigurationRule>  
             <ConfigurationRule formatVersion="20.1">
@@ -181,17 +227,17 @@
                     <Group name="audience">broad</Group>
 				</MetaInfo>
                 <VulnKingdom>Security Features</VulnKingdom>
-                <VulnCategory>Domain - Trust Store</VulnCategory>
-                <VulnSubcategory>Domain - Trust Store Configuration should not have the insecure attribute</VulnSubcategory>
+                <VulnCategory>MuleSoft Misconfiguration</VulnCategory>
+                <VulnSubcategory>Domain - Insecure Trust Store</VulnSubcategory>
                 <DefaultSeverity>5.0</DefaultSeverity>
                 <Description>
-					<Abstract>Domain - Trust Store Configuration should not have the insecure attribute.</Abstract>
+					<Abstract>The domain's Trust Store configuration should not have the insecure attribute.</Abstract>
                 </Description>
 	            <ConfigFile type="xml">
 	                <Pattern>(.*)\.xml</Pattern>
 	            </ConfigFile>
-                <XPathMatch expression="count(//*:mule/domain:mule-domain/tls:context/tls:trust-store) = count(//*:mule/domain:mule-domain/tls:context/tls:trust-store[not(@insecure)])"
-                	reporton="//*[local-name()='tls:key-store']"/>
+				<XPathMatch expression="//*:mule-domain//tls:context/tls:trust-store[namespace-uri()='http://www.mulesoft.org/schema/mule/tls' and (@insecure='true')]"
+                	reporton="//*[local-name()='trust-store']"/>
             </ConfigurationRule>  
         </RuleDefinitions>
     </Rules>

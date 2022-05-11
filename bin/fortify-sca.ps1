@@ -22,7 +22,7 @@ if ([string]::IsNullOrEmpty($AppVersion)) { throw "Application Version has not b
 Write-Host Running translation and scan...
 
 & sourceanalyzer '-Dcom.fortify.sca.ProjectRoot=.fortify' $ScanSwitches -b "$AppName" -clean
-& sourceanalyzer '-Dcom.fortify.sca.ProjectRoot=.fortify' $ScanSwitches -b "$AppName" src/main
+& sourceanalyzer '-Dcom.fortify.sca.ProjectRoot=.fortify' $ScanSwitches -b "$AppName" mule-domain/src/main mule-api-app/src/main
 & sourceanalyzer '-Dcom.fortify.sca.ProjectRoot=.fortify' $ScanSwitches -b "$AppName" -verbose -rules rules/mulesoft_rules.xml -build-project "$AppName" -build-version "$AppVersion" -build-label "SNAPSHOT" -scan -f "$($AppName).fpr"
 
 
@@ -32,9 +32,9 @@ Write-Host Running translation and scan...
 Write-Host Generating PDF report...
 & ReportGenerator '-Dcom.fortify.sca.ProjectRoot=.fortify' -user "Demo User" -format pdf -f "$($AppName).pdf" -source "$($AppName).fpr"
 
-if (![string]::IsNullOrEmpty($SSCUrl)) {
-    Write-Host Uploading results to SSC to $AppName version $AppVersion ...
-    & fortifyclient uploadFPR -file "$($AppName).fpr" -url $SSCUrl -authtoken $SSCAuthToken -application $AppName -applicationVersion $AppVersion
-}
+#if (![string]::IsNullOrEmpty($SSCUrl)) {
+#    Write-Host Uploading results to SSC to $AppName version $AppVersion ...
+#    & fortifyclient uploadFPR -file "$($AppName).fpr" -url $SSCUrl -authtoken $SSCAuthToken -application $AppName -applicationVersion $AppVersion
+#}
 
 Write-Host Done.

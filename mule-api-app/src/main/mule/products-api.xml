@@ -17,15 +17,17 @@ http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/
       		name="memory-provider"
       		delegate-ref="authenticationManager" />
   	</spring:security-manager>  
-    
-    <http:listener-config name="products-api-httpListenerConfig">
+       
+    <!-- Example HTTP listener using application configuration - comment out domain listener above if using -->
+    <!-- http:listener-config name="products-api-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="${https.port}" protocol="HTTPS">
           <tls:context name="serverTlscontext" enabledProtocols="TLSv1.2">
             <tls:trust-store type="jceks" insecure="true"/>
 				<tls:key-store type="pkcs12" path="ssl/server-dev-keystore.p12" alias="server" keyPassword="password" password="password" />
           </tls:context>
         </http:listener-connection>
-    </http:listener-config>
+    </http:listener-config-->
+    
     <apikit:config name="products-api-routerConfig" raml="products-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <db:config name="products-api-dbConfig" doc:name="Database Config" doc:id="b8cf02ea-e0e3-4aea-9aa1-e002178c6cf7" >
 		<db:my-sql-connection host="localhost" port="3306" user="fortifymule" password="fortifymule" database="fortifymule" >
@@ -36,13 +38,13 @@ http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/
 	</db:config>
 	
 	<flow name="products-main">
-        <http:listener config-ref="products-api-httpListenerConfig" path="/api/*">
+        <http:listener config-ref="domain-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
-                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
             </http:response>
             <http:error-response statusCode="#[vars.httpStatus default 500]">
-                <http:body>#[payload]</http:body>
-                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
             </http:error-response>
         </http:listener>
     	<http:basic-security-filter realm="mule" />
@@ -145,13 +147,13 @@ output application/json
 </error-handler>
     </flow>
     <flow name="products-console">
-        <http:listener config-ref="products-api-httpListenerConfig" path="/console/*">
+        <http:listener config-ref="domain-httpListenerConfig" path="/console/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
-                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
             </http:response>
             <http:error-response statusCode="#[vars.httpStatus default 500]">
-                <http:body>#[payload]</http:body>
-                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
             </http:error-response>
         </http:listener>
         <apikit:console config-ref="products-api-routerConfig" />
@@ -356,6 +358,7 @@ output application/json
 			<java:args ><![CDATA[#[{productId : attributes.uriParams.productId}]]]></java:args>
 		</java:invoke-static>
 		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
 http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd 
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="3ee6e36c-6011-46ee-bcf9-cdaee75d6a07">
             <ee:message>
