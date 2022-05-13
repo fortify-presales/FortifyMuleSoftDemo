@@ -41,6 +41,27 @@ mysql> source db\data.sql
 mysql> exit
 ```
 
+**Editing and Running in Anypoint Studio**
+
+To edit and run this project in Anypoint Studio you need to import both the domain and application project(s). This can be achieved as follows:
+
+1. Download this repository to a directory on your local disk using Git:
+   `git checkout https://github.com/fortify-presales/FortifyMuleSoftDemo.git`
+3. Startup Anypoint Studio and select the default workspace.
+4. In the Package Explorer click on Import Project and select `Anypoint Studio project from Filesystem`.
+5. Browse to the local of the downloaded `mule-domain` directory. The Project Name should be shown as `fortify-1.0.0-mule-domain`.
+   Note: I usually keep the downloaded files in the current location by unticking `Copy project into workspace`.
+6. Repeat the Import operation again by right-clicking in the Package Explorer and this time select the `mule-api-app` directory.
+
+You can now run the MuleSoft API application by right-clicking on it and selecting Run As->Mule Application.
+
+Once the application (and domain) have deployed you can browse to the API at `https://localhost:8082/console/` or use the provided Postman collection
+in the `etc` directory to exercise it.
+
+**Deploying to a standalone server**
+
+TBD
+
 **Fortify Static Code Analyzer (SAST) scan**
 
 To execute a Fortify Static Code Analyzer SAST scan, run the following commands:
