@@ -11,7 +11,16 @@ the deployed API can be tesed and vulnerability scanned using [Fortify WebInspec
 
 *PLEASE NOTE: This is a work in progress and is not officially supported by Micro Focus.*
 
-**Setup**
+**Environment Setup**
+
+To demonstrate this application you will need the following installed and configured:
+
+  - Fortify Static Code Analyzer
+  - Fortify WebInspect or ScanCentral DAST (optional)
+  - The [Postman app](https://www.postman.com/downloads/) (optional)
+  - [AnyPoint Studio](https://www.mulesoft.com/lp/dl/studio)
+  - [MySQL Community Server](https://dev.mysql.com/downloads/mysql/)
+  - PowerShell (if not already installed)
 
 If you want to use the PowerShell scripts that are included with this project you will need to create a `.env` file in the root directory with contents 
 similar to the following:
@@ -41,6 +50,27 @@ mysql> source db\data.sql
 mysql> exit
 ```
 
+**Editing and Running in Anypoint Studio**
+
+To edit and run this project in Anypoint Studio you need to import both the domain and application project(s). This can be achieved as follows:
+
+1. Download this repository to a directory on your local disk using Git:
+   `git checkout https://github.com/fortify-presales/FortifyMuleSoftDemo.git`
+3. Startup Anypoint Studio and select the default workspace.
+4. In the Package Explorer click on Import Project and select `Anypoint Studio project from Filesystem`.
+5. Browse to the local of the downloaded `mule-domain` directory. The Project Name should be shown as `fortify-1.0.0-mule-domain`.
+   Note: I usually keep the downloaded files in the current location by unticking `Copy project into workspace`.
+6. Repeat the Import operation again by right-clicking in the Package Explorer and this time select the `mule-api-app` directory.
+
+You can now run the MuleSoft API application by right-clicking on it and selecting Run As->Mule Application.
+
+Once the application (and domain) have deployed you can browse to the API at `https://localhost:8082/console/` or use the provided Postman collection
+in the `etc` directory to exercise it.
+
+**Deploying to a standalone server**
+
+TBD
+
 **Fortify Static Code Analyzer (SAST) scan**
 
 To execute a Fortify Static Code Analyzer SAST scan, run the following commands:
@@ -54,8 +84,10 @@ sourceanalyzer -b FortifyMuleSoftDemo -verbose -rules rules/mulesoft_rules.xml -
 or you can use the provided PowerShell script [bin\fortify_sca.ps1]:
 
 ```
-powershell bin\fortify-sca.ps1
+powershell bin\fortify-sca.ps1 -SkipPDF -SkipSSC
 ```
+
+Note: if you want to create a PDF and/or upload the results to Software Security Center you can remove one or more of the switches.
 
 You can then view the results with Audit Workbench as follows:
 
@@ -84,6 +116,8 @@ Issue counts by analyzer:
 
 Total for all analyzers => 10 Issues
 ```
+
+Note: because the API project also contains some Java beans and encryption keys - these issues are found using existing rules.
 
 **Fortify WebInpsect (DAST) scan**
 
