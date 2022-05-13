@@ -1,185 +1,239 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mule xmlns:java="http://www.mulesoft.org/schema/mule/java"
-	xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
-	xmlns:spring="http://www.mulesoft.org/schema/mule/spring" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+	xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:spring="http://www.mulesoft.org/schema/mule/spring"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
 http://www.mulesoft.org/schema/mule/spring http://www.mulesoft.org/schema/mule/spring/current/mule-spring.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
 http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd
 http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd">
-    
-    <configuration-properties file="configuration.yaml"/>
-    
-    <spring:config name="products-api-springConfig" files="beans.xml" />
-    
-    <spring:security-manager>
-   		<spring:delegate-security-provider
-      		name="memory-provider"
-      		delegate-ref="authenticationManager" />
-  	</spring:security-manager>  
-       
-    <!-- Example HTTP listener using application configuration -->
-    <!-- http:listener-config name="products-api-httpListenerConfig">
-        <http:listener-connection host="0.0.0.0" port="${https.port}" protocol="HTTPS">
-          <tls:context name="serverTlscontext" enabledProtocols="TLSv1.2">
-            <tls:trust-store type="jceks" insecure="true"/>
-				<tls:key-store type="pkcs12" path="ssl/server-dev-keystore.p12" alias="server" keyPassword="password" password="password" />
-          </tls:context>
-        </http:listener-connection>
-    </http:listener-config-->
-    
-    <apikit:config name="products-api-routerConfig" raml="products-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
-    <db:config name="products-api-dbConfig" doc:name="Database Config" doc:id="b8cf02ea-e0e3-4aea-9aa1-e002178c6cf7" >
-		<db:my-sql-connection host="localhost" port="3306" user="fortifymule" password="fortifymule" database="fortifymule" >
-			<db:connection-properties >
-				<db:connection-property key="useSSL" value="false" />
+
+	<configuration-properties
+		file="configuration.yaml" />
+
+	<spring:config name="products-api-springConfig"
+		files="beans.xml" />
+
+	<spring:security-manager>
+		<spring:delegate-security-provider
+			name="memory-provider" delegate-ref="authenticationManager" />
+	</spring:security-manager>
+
+	<!-- Example HTTP listener using application configuration -->
+	<!-- http:listener-config name="products-api-httpListenerConfig"> <http:listener-connection 
+		host="0.0.0.0" port="${https.port}" protocol="HTTPS"> <tls:context name="serverTlscontext" 
+		enabledProtocols="TLSv1.2"> <tls:trust-store type="jceks" insecure="true"/> 
+		<tls:key-store type="pkcs12" path="ssl/server-dev-keystore.p12" alias="server" 
+		keyPassword="password" password="password" /> </tls:context> </http:listener-connection> 
+		</http:listener-config -->
+
+	<apikit:config name="products-api-routerConfig"
+		raml="products-api.raml" outboundHeadersMapName="outboundHeaders"
+		httpStatusVarName="httpStatus" />
+	<db:config name="products-api-dbConfig"
+		doc:name="Database Config"
+		doc:id="b8cf02ea-e0e3-4aea-9aa1-e002178c6cf7">
+		<db:my-sql-connection host="localhost"
+			port="3306" user="fortifymule" password="fortifymule"
+			database="fortifymule">
+			<db:connection-properties>
+				<db:connection-property key="useSSL"
+					value="false" />
 			</db:connection-properties>
 		</db:my-sql-connection>
 	</db:config>
-	
+
 	<flow name="products-main">
-        <http:listener config-ref="domain-httpListenerConfig" path="/api/*">
-            <http:response statusCode="#[vars.httpStatus default 200]">
-                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
-            </http:response>
-            <http:error-response statusCode="#[vars.httpStatus default 500]">
-                <http:body><![CDATA[#[payload]]]></http:body>
-                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
-            </http:error-response>
-        </http:listener>
-    	<http:basic-security-filter realm="mule" />
-      	<spring:authorization-filter requiredAuthorities="ROLE_ADMIN" />
-      	<logger level="DEBUG" doc:name="Logger" message="Basic Authentication Successful"/>
-        <apikit:router config-ref="products-api-routerConfig" />
-        <error-handler>
-            <on-error-propagate type="APIKIT:BAD_REQUEST">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
+		<http:listener config-ref="domain-httpListenerConfig"
+			path="/api/*">
+			<http:response
+				statusCode="#[vars.httpStatus default 200]">
+				<http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+			</http:response>
+			<http:error-response
+				statusCode="#[vars.httpStatus default 500]">
+				<http:body><![CDATA[#[payload]]]></http:body>
+				<http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+			</http:error-response>
+		</http:listener>
+		<http:basic-security-filter realm="mule" />
+		<spring:authorization-filter
+			requiredAuthorities="ROLE_ADMIN" />
+		<logger level="DEBUG" doc:name="Logger"
+			message="Basic Authentication Successful ${mule.key}" />
+		<apikit:router config-ref="products-api-routerConfig" />
+		<error-handler>
+			<on-error-propagate type="APIKIT:BAD_REQUEST">
+				<ee:transform
+					xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+					xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {message: "Bad request"}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus">400</ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-            <on-error-propagate type="APIKIT:NOT_FOUND">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
+					</ee:message>
+					<ee:variables>
+						<ee:set-variable variableName="httpStatus">400
+						</ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</on-error-propagate>
+			<on-error-propagate type="APIKIT:NOT_FOUND">
+				<ee:transform
+					xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+					xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {message: "Resource not found"}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
+					</ee:message>
+					<ee:variables>
+						<ee:set-variable variableName="httpStatus">404
+						</ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</on-error-propagate>
+			<on-error-propagate
+				type="APIKIT:METHOD_NOT_ALLOWED">
+				<ee:transform
+					xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+					xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {message: "Method not allowed"}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus">405</ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
+					</ee:message>
+					<ee:variables>
+						<ee:set-variable variableName="httpStatus">405
+						</ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</on-error-propagate>
+			<on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+				<ee:transform
+					xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+					xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {message: "Not acceptable"}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus">406</ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
+					</ee:message>
+					<ee:variables>
+						<ee:set-variable variableName="httpStatus">406
+						</ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</on-error-propagate>
+			<on-error-propagate
+				type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+				<ee:transform
+					xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+					xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {message: "Unsupported media type"}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus">415</ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
+					</ee:message>
+					<ee:variables>
+						<ee:set-variable variableName="httpStatus">415
+						</ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</on-error-propagate>
+			<on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+				<ee:transform
+					xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+					xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {message: "Not Implemented"}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus">501</ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-			<on-error-propagate type="HTTP:BASIC_AUTHENTICATION">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
+					</ee:message>
+					<ee:variables>
+						<ee:set-variable variableName="httpStatus">501
+						</ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</on-error-propagate>
+			<on-error-propagate
+				type="HTTP:BASIC_AUTHENTICATION">
+				<ee:transform
+					xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+					xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {message: "Unauthorized: username or password or the combination is invalid"}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus">401</ee:set-variable>
-                    </ee:variables>
-                </ee:transform>    
+					</ee:message>
+					<ee:variables>
+						<ee:set-variable variableName="httpStatus">401
+						</ee:set-variable>
+					</ee:variables>
+				</ee:transform>
 			</on-error-propagate>
-        
-</error-handler>
-    </flow>
-    <flow name="products-console">
-        <http:listener config-ref="domain-httpListenerConfig" path="/console/*">
-            <http:response statusCode="#[vars.httpStatus default 200]">
-                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
-            </http:response>
-            <http:error-response statusCode="#[vars.httpStatus default 500]">
-                <http:body><![CDATA[#[payload]]]></http:body>
-                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
-            </http:error-response>
-        </http:listener>
-        <apikit:console config-ref="products-api-routerConfig" />
-        <error-handler>
-            <on-error-propagate type="APIKIT:NOT_FOUND">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
+
+		</error-handler>
+	</flow>
+	<flow name="products-console">
+		<http:listener config-ref="domain-httpListenerConfig"
+			path="/console/*">
+			<http:response
+				statusCode="#[vars.httpStatus default 200]">
+				<http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+			</http:response>
+			<http:error-response
+				statusCode="#[vars.httpStatus default 500]">
+				<http:body><![CDATA[#[payload]]]></http:body>
+				<http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+			</http:error-response>
+		</http:listener>
+		<apikit:console config-ref="products-api-routerConfig" />
+		<error-handler>
+			<on-error-propagate type="APIKIT:NOT_FOUND">
+				<ee:transform
+					xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+					xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {message: "Resource not found"}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-        </error-handler>
-    </flow>
-    <flow name="get:\products:products-api-routerConfig">
-        <db:select doc:name="Select" doc:id="58a1a27a-cad0-11ec-9d64-0242ac120002" config-ref="products-api-dbConfig" queryTimeoutUnit="MILLISECONDS">
-			<db:sql ><![CDATA[SELECT *, BIN_TO_UUID(id) as uuid FROM fortifymule.products]]></db:sql>
+					</ee:message>
+					<ee:variables>
+						<ee:set-variable variableName="httpStatus">404
+						</ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</on-error-propagate>
+		</error-handler>
+	</flow>
+	<flow name="get:\products:products-api-routerConfig">
+		<db:select doc:name="Select"
+			doc:id="58a1a27a-cad0-11ec-9d64-0242ac120002"
+			config-ref="products-api-dbConfig" queryTimeoutUnit="MILLISECONDS">
+			<db:sql><![CDATA[SELECT *, BIN_TO_UUID(id) as uuid FROM fortifymule.products]]></db:sql>
 		</db:select>
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="e08e9347-9446-455a-a462-4485e38e5ed0">
-            <ee:message>
-                <ee:set-payload ><![CDATA[%dw 2.0
+		<ee:transform
+			xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+			xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd"
+			doc:id="e08e9347-9446-455a-a462-4485e38e5ed0">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 payload map ((product, indexOfProduct) -> {
@@ -197,16 +251,21 @@ payload map ((product, indexOfProduct) -> {
 	rating: product.rating,
 	available: product.available
 })]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
-    </flow>
-    
-    <flow name="post:\products:products-api-routerConfig">
-		<set-variable value="#[uuid()]" doc:name="Set Variable" doc:id="d7e834a7-4f0b-4e4e-8a24-1fd3226f1c89" variableName="productId"/>
-		<db:insert doc:name="Insert" doc:id="74ad81cd-3ece-4413-85be-4184f713e8b3" config-ref="products-api-dbConfig" queryTimeoutUnit="MILLISECONDS" target="payload">
-			<db:sql ><![CDATA[INSERT INTO fortifymule.products(id, code, name, summary, description, image, price, on_sale, sale_price, in_stock, time_to_stock, rating, available)
+			</ee:message>
+		</ee:transform>
+	</flow>
+
+	<flow name="post:\products:products-api-routerConfig">
+		<set-variable value="#[uuid()]" doc:name="Set Variable"
+			doc:id="d7e834a7-4f0b-4e4e-8a24-1fd3226f1c89"
+			variableName="productId" />
+		<db:insert doc:name="Insert"
+			doc:id="74ad81cd-3ece-4413-85be-4184f713e8b3"
+			config-ref="products-api-dbConfig" queryTimeoutUnit="MILLISECONDS"
+			target="payload">
+			<db:sql><![CDATA[INSERT INTO fortifymule.products(id, code, name, summary, description, image, price, on_sale, sale_price, in_stock, time_to_stock, rating, available)
 VALUES(UUID_TO_BIN(:id), :code, :name, :summary, :description, :image, :price, :onSale, :salePrice, :inStock, :timeToStock, :rating, :available)]]></db:sql>
-			<db:input-parameters ><![CDATA[#[{
+			<db:input-parameters><![CDATA[#[{
 	'id' : vars.productId,
 	'code' : payload.code,
     'name': payload.name,
@@ -222,15 +281,21 @@ VALUES(UUID_TO_BIN(:id), :code, :name, :summary, :description, :image, :price, :
     'available': payload.available	
 }]]]></db:input-parameters>
 		</db:insert>
-		<db:select doc:name="Select" doc:id="8edba480-cf39-425c-8c21-08c35ea4487c" config-ref="products-api-dbConfig" queryTimeoutUnit="MILLISECONDS" target="payload">
-			<db:sql ><![CDATA[SELECT *, BIN_TO_UUID(id) as uuid FROM fortifymule.products WHERE id = UUID_TO_BIN(:id)]]></db:sql>
-			<db:input-parameters ><![CDATA[#[{'id' : vars.productId }]]]></db:input-parameters>
+		<db:select doc:name="Select"
+			doc:id="8edba480-cf39-425c-8c21-08c35ea4487c"
+			config-ref="products-api-dbConfig" queryTimeoutUnit="MILLISECONDS"
+			target="payload">
+			<db:sql><![CDATA[SELECT *, BIN_TO_UUID(id) as uuid FROM fortifymule.products WHERE id = UUID_TO_BIN(:id)]]></db:sql>
+			<db:input-parameters><![CDATA[#[{'id' : vars.productId }]]]></db:input-parameters>
 		</db:select>
-  		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="
+		<ee:transform
+			xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+			xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd 
-http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="9c7f815c-9762-41ce-b160-4f33123a86b6">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0 
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd"
+			doc:id="9c7f815c-9762-41ce-b160-4f33123a86b6">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0 
 output application/json
 ---
 {
@@ -248,20 +313,25 @@ output application/json
 	rating: payload.rating,
 	available: payload.available	
 }]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
-    </flow>
-    
-    <flow name="get:\products\(productId):products-api-routerConfig">
-        <db:select doc:name="Select" doc:id="a16cf67a-ee30-45ba-84a3-06ac952117ae" config-ref="products-api-dbConfig" queryTimeoutUnit="MILLISECONDS">
-			<db:sql ><![CDATA[SELECT *, BIN_TO_UUID(id) as uuid FROM fortifymule.products WHERE id = UUID_TO_BIN(:id)]]></db:sql>
-			<db:input-parameters ><![CDATA[#[{'id' : attributes.uriParams.productId}]]]></db:input-parameters>
+			</ee:message>
+		</ee:transform>
+	</flow>
+
+	<flow name="get:\products\(productId):products-api-routerConfig">
+		<db:select doc:name="Select"
+			doc:id="a16cf67a-ee30-45ba-84a3-06ac952117ae"
+			config-ref="products-api-dbConfig" queryTimeoutUnit="MILLISECONDS">
+			<db:sql><![CDATA[SELECT *, BIN_TO_UUID(id) as uuid FROM fortifymule.products WHERE id = UUID_TO_BIN(:id)]]></db:sql>
+			<db:input-parameters><![CDATA[#[{'id' : attributes.uriParams.productId}]]]></db:input-parameters>
 		</db:select>
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="
+		<ee:transform
+			xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+			xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd 
-http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="e08e9347-9446-455a-a462-4485e38e5ed0">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd"
+			doc:id="e08e9347-9446-455a-a462-4485e38e5ed0">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
 output application/json 
 var product = payload[0]
 ---
@@ -280,16 +350,21 @@ var product = payload[0]
 	rating: product.rating,
 	available: product.available	
 }]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
-    </flow>
-    
-    <flow name="put:\products\(productId):products-api-routerConfig">
-        <set-variable value="attributes.uriParams.productId" doc:name="Set Variable" doc:id="ab220cd8-e238-4173-84e7-8f8c2f548d68" variableName="productId"/>
-		<db:update doc:name="Update" doc:id="3f0f0cda-d9cf-4cd5-9dc1-c5149adb264f" config-ref="products-api-dbConfig" queryTimeoutUnit="MILLISECONDS" target="payload">
-			<db:sql ><![CDATA[UPDATE fortifymule.products SET code = :code, name = :name, summary = :summary, description = :description, image = :image, price = :price, on_sale = :onSale, sale_price = :salePrice, in_stock = :inStock, time_to_stock = :timeToStock, rating = :rating, available = :available
+			</ee:message>
+		</ee:transform>
+	</flow>
+
+	<flow name="put:\products\(productId):products-api-routerConfig">
+		<set-variable value="attributes.uriParams.productId"
+			doc:name="Set Variable" doc:id="ab220cd8-e238-4173-84e7-8f8c2f548d68"
+			variableName="productId" />
+		<db:update doc:name="Update"
+			doc:id="3f0f0cda-d9cf-4cd5-9dc1-c5149adb264f"
+			config-ref="products-api-dbConfig" queryTimeoutUnit="MILLISECONDS"
+			target="payload">
+			<db:sql><![CDATA[UPDATE fortifymule.products SET code = :code, name = :name, summary = :summary, description = :description, image = :image, price = :price, on_sale = :onSale, sale_price = :salePrice, in_stock = :inStock, time_to_stock = :timeToStock, rating = :rating, available = :available
 WHERE id = UUID_TO_BIN(:id)]]></db:sql>
-			<db:input-parameters ><![CDATA[#[{
+			<db:input-parameters><![CDATA[#[{
 	'id' : attributes.uriParams.productId,
 	'code' : payload.code,
     'name': payload.name,
@@ -305,15 +380,21 @@ WHERE id = UUID_TO_BIN(:id)]]></db:sql>
     'available': payload.available	
 }]]]></db:input-parameters>
 		</db:update>
-		<db:select doc:name="Select" doc:id="b40ac26b-abb0-484d-b681-c6ecc4acab23" config-ref="products-api-dbConfig" queryTimeoutUnit="NANOSECONDS" target="payload">
-			<db:sql ><![CDATA[SELECT *, BIN_TO_UUID(id) as uuid FROM fortifymule.products WHERE id = UUID_TO_BIN(:id)]]></db:sql>
-			<db:input-parameters ><![CDATA[#[{'id' : attributes.uriParams.productId}]]]></db:input-parameters>
+		<db:select doc:name="Select"
+			doc:id="b40ac26b-abb0-484d-b681-c6ecc4acab23"
+			config-ref="products-api-dbConfig" queryTimeoutUnit="NANOSECONDS"
+			target="payload">
+			<db:sql><![CDATA[SELECT *, BIN_TO_UUID(id) as uuid FROM fortifymule.products WHERE id = UUID_TO_BIN(:id)]]></db:sql>
+			<db:input-parameters><![CDATA[#[{'id' : attributes.uriParams.productId}]]]></db:input-parameters>
 		</db:select>
-  		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="
+		<ee:transform
+			xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+			xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd 
-http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="0aaa06af-fd70-494a-9700-88d31504b434">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0 
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd"
+			doc:id="0aaa06af-fd70-494a-9700-88d31504b434">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0 
 output application/json
 ---
 {
@@ -331,45 +412,58 @@ output application/json
 	rating: payload.rating,
 	available: payload.available	
 }]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
-    </flow>
-    
-    <flow name="delete:\products\(productId):products-api-routerConfig">
-        <db:delete doc:name="Delete" doc:id="47c46a06-3dfc-4327-9396-696423cad0de" config-ref="products-api-dbConfig" queryTimeoutUnit="MILLISECONDS">
-			<db:sql ><![CDATA[DELETE FROM fortifymule.products WHERE id = UUID_TO_BIN(:id)]]></db:sql>
-			<db:input-parameters ><![CDATA[#[{'id' : attributes.uriParams.productId}]]]></db:input-parameters>
+			</ee:message>
+		</ee:transform>
+	</flow>
+
+	<flow
+		name="delete:\products\(productId):products-api-routerConfig">
+		<db:delete doc:name="Delete"
+			doc:id="47c46a06-3dfc-4327-9396-696423cad0de"
+			config-ref="products-api-dbConfig" queryTimeoutUnit="MILLISECONDS">
+			<db:sql><![CDATA[DELETE FROM fortifymule.products WHERE id = UUID_TO_BIN(:id)]]></db:sql>
+			<db:input-parameters><![CDATA[#[{'id' : attributes.uriParams.productId}]]]></db:input-parameters>
 		</db:delete>
-  		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="
+		<ee:transform
+			xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+			xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd 
-http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="b1f241eb-50c5-4cb7-8820-90913f885d8b">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd"
+			doc:id="b1f241eb-50c5-4cb7-8820-90913f885d8b">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
 	message: "The product was deleted"
 }]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
-    </flow>
-    <flow name="get:\products\(productId)\stockLevel:products-api-routerConfig">
-        <java:invoke-static method="getStockLevel(java.lang.String)" doc:name="Invoke static" doc:id="36ef32c9-900c-43db-b74e-38f5ef9ee044" class="com.microfocus.example.StockService" target="stockLevel">
-			<java:args ><![CDATA[#[{productId : attributes.uriParams.productId}]]]></java:args>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow
+		name="get:\products\(productId)\stockLevel:products-api-routerConfig">
+		<java:invoke-static
+			method="getStockLevel(java.lang.String)" doc:name="Invoke static"
+			doc:id="36ef32c9-900c-43db-b74e-38f5ef9ee044"
+			class="com.microfocus.example.StockService" target="stockLevel">
+			<java:args><![CDATA[#[{productId : attributes.uriParams.productId}]]]></java:args>
 		</java:invoke-static>
-		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="
+		<ee:transform
+			xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+			xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
 http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd 
-http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="3ee6e36c-6011-46ee-bcf9-cdaee75d6a07">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd"
+			doc:id="3ee6e36c-6011-46ee-bcf9-cdaee75d6a07">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
 	productId: attributes.uriParams.'productId',
 	quantity: vars.stockLevel	
 }]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
-    </flow>
+			</ee:message>
+		</ee:transform>
+	</flow>
 </mule>

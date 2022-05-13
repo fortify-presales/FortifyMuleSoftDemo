@@ -2,6 +2,14 @@
 # Example script to perform Fortify SCA static analysis
 #
 
+# Parameters
+param (
+    [Parameter(Mandatory=$false)]
+    [switch]$SkipPDF,
+    [Parameter(Mandatory=$false)]
+    [switch]$SkipSSC
+)
+
 # Import some supporting functions
 Import-Module $PSScriptRoot\modules\FortifyFunctions.psm1
 
@@ -29,12 +37,15 @@ Write-Host Running translation and scan...
 # summarise issue count by analyzer
 & fprutility -information -analyzerIssueCounts -listIssues -project "$($AppName).fpr"
 
-Write-Host Generating PDF report...
-& ReportGenerator '-Dcom.fortify.sca.ProjectRoot=.fortify' -user "Demo User" -format pdf -f "$($AppName).pdf" -source "$($AppName).fpr"
+if (-not $SkipPDF) {
+	Write-Host Generating PDF report...
+	& ReportGenerator '-Dcom.fortify.sca.ProjectRoot=.fortify' -user "Demo User" -format pdf -f "$($AppName).pdf" -source "$($AppName).fpr"
+}	
 
-if (![string]::IsNullOrEmpty($SSCUrl)) {
+if (-not $SkipSSC) {
     Write-Host Uploading results to SSC to $AppName version $AppVersion ...
     & fortifyclient uploadFPR -file "$($AppName).fpr" -url $SSCUrl -authtoken $SSCAuthToken -application $AppName -applicationVersion $AppVersion
 }
+
 
 Write-Host Done.
