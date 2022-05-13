@@ -84,8 +84,10 @@ sourceanalyzer -b FortifyMuleSoftDemo -verbose -rules rules/mulesoft_rules.xml -
 or you can use the provided PowerShell script [bin\fortify_sca.ps1]:
 
 ```
-powershell bin\fortify-sca.ps1
+powershell bin\fortify-sca.ps1 -SkipPDF -SkipSSC
 ```
+
+Note: if you want to create a PDF and/or upload the results to Software Security Center you can remove one or more of the switches.
 
 You can then view the results with Audit Workbench as follows:
 
@@ -114,6 +116,8 @@ Issue counts by analyzer:
 
 Total for all analyzers => 10 Issues
 ```
+
+Note: because the API project also contains some Java beans and encryption keys - these issues are found using existing rules.
 
 **Fortify WebInpsect (DAST) scan**
 
