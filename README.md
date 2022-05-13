@@ -11,7 +11,16 @@ the deployed API can be tesed and vulnerability scanned using [Fortify WebInspec
 
 *PLEASE NOTE: This is a work in progress and is not officially supported by Micro Focus.*
 
-**Setup**
+**Environment Setup**
+
+To demonstrate this application you will need the following installed and configured:
+
+  - Fortify Static Code Analyzer
+  - Fortify WebInspect or ScanCentral DAST (optional)
+  - The [Postman app](https://www.postman.com/downloads/) (optional)
+  - [AnyPoint Studio](https://www.mulesoft.com/lp/dl/studio)
+  - [MySQL Community Server](https://dev.mysql.com/downloads/mysql/)
+  - PowerShell (if not already installed)
 
 If you want to use the PowerShell scripts that are included with this project you will need to create a `.env` file in the root directory with contents 
 similar to the following:
