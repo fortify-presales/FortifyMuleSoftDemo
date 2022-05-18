@@ -14,7 +14,8 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 
     <configuration-properties file="configuration.yaml"/>
 
-    <!-- configure here resource to be shared within the domain -->
+    <!-- resources to be shared within the domain -->
+	
     <http:listener-config name="domain-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="${https.port}" protocol="HTTPS">
 		   	<tls:context name="serverTlscontext" enabledProtocols="TLSv1.2">
@@ -23,10 +24,22 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 		    </tls:context>
         </http:listener-connection>
     </http:listener-config>
+	
+	<http:request-config
+            name="domain-httpRequestConfig" doc:name="HTTP Request configuration"
+            doc:id="bffcdead-ddfb-4c89-ba42-95fb011454a2"
+            basePath="/api/v7/convert" responseTimeout="10">
+            <http:request-connection
+                    host="free.currconv.com" />
+            <http:default-headers>
+                    <http:default-header key="apiKey"
+                        value="#[vars.apiKey]" />
+            </http:default-headers>
+            <http:default-query-params>
+                    <http:query-param key="apiKey"
+                        value="#[vars.apiKey]" />
+            </http:default-query-params>
+    </http:request-config>
     
-	<!-- tls:context name="TLS_Context" doc:name="TLS Context" doc:id="4ba737b2-bc3d-4f26-a94b-29e37b356e4c" >
-		<tls:trust-store path="test" password="test" type="test" algorithm="test" insecure="true" />
-		<tls:key-store type="jceks" path="test" keyPassword="testtest" password="testse" />
-	</tls:context-->
 
 </domain:mule-domain>

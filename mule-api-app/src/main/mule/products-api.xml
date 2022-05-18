@@ -35,6 +35,22 @@ http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/
 		keyPassword="password" password="password" /> </tls:context> </http:listener-connection> 
 		</http:listener-config -->
 
+	<!-- Example HTTP requestor using application configuration -->
+	<http:request-config
+		name="HTTP_Request_configuration"
+		doc:name="HTTP Request configuration"
+		doc:id="a9911794-2dc2-4071-b8c4-1a170531bc0c" basePath="/sdfsfsdf"
+		defaultHeaders="#[vars.apiKey]">
+		<http:default-query-params>
+			<http:query-param key="apiKey"
+				value="#[vars.apiKey]" />
+		</http:default-query-params>
+		<http:default-headers>
+			<http:default-header key="apiKey"
+				value="#[vars.apiKey]" />
+		</http:default-headers>
+	</http:request-config>
+
 	<apikit:config name="products-api-routerConfig"
 		raml="products-api.raml" outboundHeadersMapName="outboundHeaders"
 		httpStatusVarName="httpStatus" />
@@ -68,7 +84,7 @@ http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/
 		<spring:authorization-filter
 			requiredAuthorities="ROLE_ADMIN" />
 		<logger level="DEBUG" doc:name="Logger"
-			message="Basic Authentication Successful ${mule.key}" />
+			message="Basic Authentication Successful" />
 		<apikit:router config-ref="products-api-routerConfig" />
 		<error-handler>
 			<on-error-propagate type="APIKIT:BAD_REQUEST">

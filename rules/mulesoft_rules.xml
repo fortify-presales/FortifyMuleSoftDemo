@@ -13,6 +13,7 @@
 	</Description>
 	<Rules version="3.2">
 		<RuleDefinitions>
+			<!-- HTTP Listener Configuration rules -->
 			<ConfigurationRule formatVersion="20.1">
 				<RuleID>CD3402F5-E945-44CB-9794-EAA75CA50A07</RuleID>
 				<MetaInfo>
@@ -62,6 +63,10 @@
 					expression="//*:listener-connection[namespace-uri()='http://www.mulesoft.org/schema/mule/http' and (@port='${http.port}' or @port='${https.port}')]"
 					reporton="//*[local-name()='listener-config']" />
 			</ConfigurationRule>
+
+
+			<!-- Database Configuration rules -->
+			
 			<ConfigurationRule formatVersion="20.1">
 				<RuleID>ff8867a4-cacb-11ec-9d64-0242ac120002</RuleID>
 				<MetaInfo>
@@ -112,7 +117,7 @@
 					expression="count(//*:mule/db:config/db:my-sql-connection) > 0 and not(matches(//*:mule/db:config/db:my-sql-connection/@password, '^\$\{.*\}$'))"
 					reporton="//*[local-name()='my-sql-connection']" />
 			</ConfigurationRule>
-			<!-- TODO: rule contains a valid XPathExpression but not currently working -->			
+			<!-- MuleSoft Logger rules -->
 			<ConfigurationRule formatVersion="20.1">
 				<RuleID>3568c4b7-c478-4742-9809-b86a1a89c4ee</RuleID>
 				<MetaInfo>
@@ -133,10 +138,12 @@
 				<ConfigFile type="xml">
 					<Pattern>(.*)\.xml</Pattern>
 				</ConfigFile>
+				<!-- TODO: rule contains a valid XPathExpression but not currently working -->			
 				<XPathMatch
 					expression="count(//*:mule/flow/logger) > 0 and contains(//*:mule/flow/logger/@message, '${mule.key}')"
 					reporton="//*[local-name()='logger']" />
 			</ConfigurationRule>
+			<!-- APIKit rules -->
 			<ConfigurationRule formatVersion="20.1">
 				<RuleID>e9252a92-56c8-498b-a5de-67fefdb60d0b</RuleID>
 				<MetaInfo>
@@ -163,6 +170,7 @@
 					expression="count(//*:mule/api-platform-gw:api) = 1 and (//*:mule/api-platform-gw:api/@create = true)"
 					reporton="//*[local-name()='api-platform-gw:ap']" />
 			</ConfigurationRule>
+			<!-- Application TLS Context Configuration rules -->			
 			<ConfigurationRule formatVersion="20.1">
 				<RuleID>b1088ff6-4287-455d-87d7-47929e6eae12</RuleID>
 				<MetaInfo>
@@ -215,6 +223,7 @@
 					expression="(//*:mule/http:listener-config//tls:context/tls:key-store) and not(matches(//*:mule/http:listener-config//tls:context/tls:key-store/@path, '^\$\{.*\}$'))"
 					reporton="//*[local-name()='tls:key-store']" />
 			</ConfigurationRule>
+			<!-- Domain Configuration rules -->			
 			<ConfigurationRule formatVersion="20.1">
 				<RuleID>3f619683-1718-482b-ba51-b54bf015c00d</RuleID>
 				<MetaInfo>
@@ -227,8 +236,7 @@
 				</MetaInfo>
 				<VulnKingdom>Security Features</VulnKingdom>
 				<VulnCategory>MuleSoft Misconfiguration</VulnCategory>
-				<VulnSubcategory>Domain - Hard-coded Key Store configuration
-				</VulnSubcategory>
+				<VulnSubcategory>Domain - Hard-coded Key Store configuration</VulnSubcategory>
 				<DefaultSeverity>5.0</DefaultSeverity>
 				<Description>
 					<Abstract>The domain's Key Store Configuration should use a
@@ -262,11 +270,13 @@
 				<ConfigFile type="xml">
 					<Pattern>(.*)\.xml</Pattern>
 				</ConfigFile>
-				<XPathMatch
-					expression="//*:mule-domain//tls:context/tls:trust-store[namespace-uri()='http://www.mulesoft.org/schema/mule/tls' and (@insecure='true')]"
-					reporton="//*[local-name()='trust-store']" />
+				<XPathMatch 
+					expression="//*[local-name()='mule-domain' and namespace-uri()='http://www.mulesoft.org/schema/mule/ee/domain']//*[local-name()='context' and namespace-uri()='http://www.mulesoft.org/schema/mule/tls']/*[local-name()='trust-store' and namespace-uri()='http://www.mulesoft.org/schema/mule/tls' and (@insecure='true')]"
+					reporton="local-name()='trust-store' and namespace-uri()='http://www.mulesoft.org/schema/mule/tls'" />
+				<!-- XPathMatch
+					expression="//*:mule-domain[namespace-uri()='http://www.mulesoft.org/schema/mule/ee/domain']//tls:context/tls:trust-store[namespace-uri()='http://www.mulesoft.org/schema/mule/tls' and (@insecure='true')]"
+					reporton="//*[local-name()='trust-store']" -->
 			</ConfigurationRule>
-			<!-- TODO: rule contains a valid XPathExpression but not currently working -->
 			<ConfigurationRule formatVersion="20.1">
 				<RuleID>126917f8-a6a4-4194-891d-7b20638c3381</RuleID>
 				<MetaInfo>
@@ -279,23 +289,20 @@
 				</MetaInfo>
 				<VulnKingdom>Security Features</VulnKingdom>
 				<VulnCategory>MuleSoft Misconfiguration</VulnCategory>
-				<VulnSubcategory>Domain - HTTP Requestor configuration uses dynamic
-					headers</VulnSubcategory>
+				<VulnSubcategory>Domain - HTTP Requestor configuration uses dynamic default headers</VulnSubcategory>
 				<DefaultSeverity>5.0</DefaultSeverity>
 				<Description>
-					<Abstract>The domain's HTTP Requestor configuration should not use
-						dynamic default headers.</Abstract>
+					<Abstract>The domain's HTTP Requestor configuration should not use dynamic default headers.</Abstract>
 				</Description>
 				<ConfigFile type="xml">
 					<Pattern>(.*)\.xml</Pattern>
 				</ConfigFile>
 				<XPathMatch
-					expression="//*:mule-domain//http:request-config/http:default-headers/http:default-header[matches(@value,'^#\[.*\]$')]"
-					reporton="//*[local-name()='default-header']" />
+					expression="//*[local-name()='mule-domain' and namespace-uri()='http://www.mulesoft.org/schema/mule/ee/domain']//*[local-name()='default-query-params' and namespace-uri()='http://www.mulesoft.org/schema/mule/http']/*[local-name()='query-param' and namespace-uri()='http://www.mulesoft.org/schema/mule/http' and matches(@value,'^#\[.*\]$')]"
+					reporton="//*[local-name()='query-param' and namespace-uri()='http://www.mulesoft.org/schema/mule/http']" />
 			</ConfigurationRule>
-			<!-- TODO: rule contains a valid XPathExpression but not currently working -->
 			<ConfigurationRule formatVersion="20.1">
-				<RuleID>2cc99026-a397-46b3-b68e-a1116dd17e7a</RuleID>
+				<RuleID>837c75ff-8a8a-497f-9b7b-4b71f41fe614</RuleID>
 				<MetaInfo>
 					<Group name="Accuracy">4.0</Group>
 					<Group name="Impact">5.0</Group>
@@ -306,19 +313,17 @@
 				</MetaInfo>
 				<VulnKingdom>Security Features</VulnKingdom>
 				<VulnCategory>MuleSoft Misconfiguration</VulnCategory>
-				<VulnSubcategory>Domain - HTTP Requestor configuration uses dynamic
-					query params</VulnSubcategory>
+				<VulnSubcategory>Domain - HTTP Requestor configuration uses dynamic default query params</VulnSubcategory>
 				<DefaultSeverity>5.0</DefaultSeverity>
 				<Description>
-					<Abstract>The domain's HTTP Requestor configuration should not use
-						dynamic query parameters.</Abstract>
+					<Abstract>The domain's HTTP Requestor configuration should not use dynamic default query parameters.</Abstract>
 				</Description>
 				<ConfigFile type="xml">
 					<Pattern>(.*)\.xml</Pattern>
 				</ConfigFile>
 				<XPathMatch
-					expression="//*:mule-domain//http:request-config/http:default-query-params/http:query-param[matches(@value,'^#\[.*\]$')]"
-					reporton="//*[local-name()='query-param']" />
+					expression="//*[local-name()='mule-domain' and namespace-uri()='http://www.mulesoft.org/schema/mule/ee/domain']//*[local-name()='default-headers' and namespace-uri()='http://www.mulesoft.org/schema/mule/http']/*[local-name()='default-header' and namespace-uri()='http://www.mulesoft.org/schema/mule/http' and matches(@value,'^#\[.*\]$')]"
+					reporton="//*[local-name()='default-header' and namespace-uri()='http://www.mulesoft.org/schema/mule/http']" />
 			</ConfigurationRule>
 		</RuleDefinitions>
 	</Rules>

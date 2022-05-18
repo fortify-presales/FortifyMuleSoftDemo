@@ -76,9 +76,7 @@ TBD
 To execute a Fortify Static Code Analyzer SAST scan, run the following commands:
 
 ```
-sourceanalyzer -b FortifyMuleSoftDemo -clean
-sourceanalyzer -b FortifyMuleSoftDemo mule-domain/src/main mule-api-app/src/main
-sourceanalyzer -b FortifyMuleSoftDemo -verbose -rules rules/mulesoft_rules.xml -scan -f FortifyMuleSoftDemo.fpr
+sourceanalyzer -verbose -rules rules/mulesoft_rules.xml -scan mule-domain/src/main/ mule-api-app/src/main/
 ```
 
 or you can use the provided PowerShell script [bin\fortify_sca.ps1]:
@@ -87,9 +85,9 @@ or you can use the provided PowerShell script [bin\fortify_sca.ps1]:
 powershell bin\fortify-sca.ps1 -SkipPDF -SkipSSC
 ```
 
-Note: if you want to create a PDF and/or upload the results to Software Security Center you can remove one or more of the switches.
+Note: if you want to create a PDF and/or upload the results to Software Security Center you can remove one or both of the switches.
 
-You can then view the results with Audit Workbench as follows:
+If you run the PowerShell script then you can then view the results with Audit Workbench as follows:
 
 ```
 auditworkbench FortifyMuleSoftDemo.fpr
@@ -100,12 +98,18 @@ You should see output similar to the following:
 ```
 Issue counts by analyzer:
 
- "configuration" => 7 Issues
-     mule-api-app/src/main/mule/products-api.xml:33 (MuleSoft Bad Practice: MySQL - hardcoded database host)
-     mule-api-app/src/main/mule/products-api.xml:33 (Password Management: MySQL - hardcoded password)
-     mule-domain/src/main/mule/mule-domain-config.xml:0 (MuleSoft Misconfiguration: Domain - Hardcoded Key Store configuration)
-     mule-domain/src/main/mule/mule-domain-config.xml:19 (MuleSoft Misconfiguration: HTTP(S) port not configured)
-     mule-domain/src/main/mule/mule-domain-config.xml:21 (MuleSoft Misconfiguration: Domain - Insecure Trust Store)
+ "configuration" => 13 Issues
+     mule-api-app/src/main/mule/products-api.xml:46 (MuleSoft Misconfiguration: HTTP Requestor configuration uses dynamic defaults query params)
+     mule-api-app/src/main/mule/products-api.xml:50 (MuleSoft Misconfiguration: HTTP Requestor configuration uses dynamic default headers)
+     mule-api-app/src/main/mule/products-api.xml:62 (MuleSoft Bad Practice: MySQL - hardcoded database host)
+     mule-api-app/src/main/mule/products-api.xml:62 (Password Management: MySQL - hardcoded password)
+     mule-domain/src/main/mule/mule-domain-config.xml:0 (MuleSoft Misconfiguration: Domain - Hard-coded Key Store configuration)
+     mule-domain/src/main/mule/mule-domain-config.xml:20 (MuleSoft Misconfiguration: HTTP(S) port not configured)
+     mule-domain/src/main/mule/mule-domain-config.xml:22 (MuleSoft Misconfiguration: Domain - Insecure Trust Store)
+     mule-domain/src/main/mule/mule-domain-config.xml:36 (MuleSoft Misconfiguration: Domain - HTTP Requestor configuration uses dynamic default headers)
+     mule-domain/src/main/mule/mule-domain-config.xml:36 (MuleSoft Misconfiguration: Domain - HTTP Requestor configuration uses dynamic default query params)
+     mule-domain/src/main/mule/mule-domain-config.xml:36 (MuleSoft Misconfiguration: HTTP Requestor configuration uses dynamic default headers)
+     mule-domain/src/main/mule/mule-domain-config.xml:40 (MuleSoft Misconfiguration: HTTP Requestor configuration uses dynamic defaults query params)
      mule-domain/src/main/resources/ssl/server-dev-keystore.p12:0 (Key Management: Hardcoded Encryption Key)
      mule-domain/src/main/resources/ssl/trusted-client-truststore.p12:0 (Key Management: Hardcoded Encryption Key)
  "semantic" => 2 Issues
@@ -114,7 +118,7 @@ Issue counts by analyzer:
  "structural" => 1 Issues
      mule-api-app/src/main/java/com/microfocus/example/StockService.java:31 (J2EE Bad Practices: Leftover Debug Code)
 
-Total for all analyzers => 10 Issues
+Total for all analyzers => 16 Issues
 ```
 
 Note: because the API project also contains some Java beans and encryption keys - these issues are found using existing rules.
