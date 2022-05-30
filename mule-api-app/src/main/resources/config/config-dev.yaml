@@ -1,0 +1,37 @@
+# API Configurations
+api:
+  name: "${project.artifactId}"
+  version: "${project.version}"
+  #Replace with respective autodiscovery id
+  autodiscoveryID: "16422509"
+  
+# Listener configuration  
+https:
+  host: "0.0.0.0"
+  port: "8082"
+  
+# API Configuration
+store-api:
+  http-listener:
+    path: "/api/*"
+
+# Retry configuration 
+retry:
+   amq: 
+    delayMillisecs: "3000"
+    numRetries: "3"
+tls:
+    keyStorepass: "password"
+    password: "password"
+    
+# Reconnect configuration 
+reconnection:
+     amq:
+      frequency: "2000"
+      attempts: "2"
+
+# Customize the application messages in the below section
+application-msgs:
+  #Local Exception logger message
+  local-exception-handler-message: "Exception has occured"
+  success-flag: "true"
