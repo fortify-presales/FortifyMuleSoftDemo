@@ -29,8 +29,7 @@
 				<VulnSubcategory>HTTPS not required</VulnSubcategory>
 				<DefaultSeverity>2.0</DefaultSeverity>
 				<Description>
-					<Abstract>A HTTP Listener should be configured to use the HTTPS
-						protocol.</Abstract>
+					<Abstract>A HTTP Listener should be configured to use the HTTPS	protocol.</Abstract>
 				</Description>
 				<ConfigFile type="xml">
 					<Pattern>(.*)\.xml</Pattern>
@@ -53,8 +52,7 @@
 				<VulnSubcategory>HTTP(S) port not configured</VulnSubcategory>
 				<DefaultSeverity>2.0</DefaultSeverity>
 				<Description>
-					<Abstract>A HTTP Listener should be configured to use a specific
-						port.</Abstract>
+					<Abstract>A HTTP Listener should be configured to use a specific port.</Abstract>
 				</Description>
 				<ConfigFile type="xml">
 					<Pattern>(.*)\.xml</Pattern>
@@ -82,8 +80,7 @@
 				<VulnSubcategory>MySQL - hardcoded database host</VulnSubcategory>
 				<DefaultSeverity>2.0</DefaultSeverity>
 				<Description>
-					<Abstract>MySQL - The database host name should not be a hardcoded
-						value.</Abstract>
+					<Abstract>MySQL - The database host name should not be a hardcoded value.</Abstract>
 				</Description>
 				<ConfigFile type="xml">
 					<Pattern>(.*)\.xml</Pattern>
@@ -107,8 +104,7 @@
 				<VulnSubcategory>MySQL - hardcoded password</VulnSubcategory>
 				<DefaultSeverity>5.0</DefaultSeverity>
 				<Description>
-					<Abstract>MySQL - The password should not be a hardcoded value.
-					</Abstract>
+					<Abstract>MySQL - The password should not be a hardcoded value.</Abstract>
 				</Description>
 				<ConfigFile type="xml">
 					<Pattern>(.*)\.xml</Pattern>
@@ -156,12 +152,10 @@
 				</MetaInfo>
 				<VulnKingdom>Security Features</VulnKingdom>
 				<VulnCategory>AutoDiscovery</VulnCategory>
-				<VulnSubcategory>AutoDiscovery should be used to register the app in
-					API manager</VulnSubcategory>
+				<VulnSubcategory>AutoDiscovery should be used to register the app in API manager</VulnSubcategory>
 				<DefaultSeverity>5.0</DefaultSeverity>
 				<Description>
-					<Abstract>AutoDiscovery should be used to register the app in API
-						manager.</Abstract>
+					<Abstract>AutoDiscovery should be used to register the app in API manager.</Abstract>
 				</Description>
 				<ConfigFile type="xml">
 					<Pattern>(.*)\.xml</Pattern>
@@ -187,8 +181,7 @@
 				</VulnSubcategory>
 				<DefaultSeverity>5.0</DefaultSeverity>
 				<Description>
-					<Abstract>The application's Trust Store configuration should not
-						have the insecure attribute.</Abstract>
+					<Abstract>The application's Trust Store configuration should not have the insecure attribute.</Abstract>
 				</Description>
 				<ConfigFile type="xml">
 					<Pattern>(.*)\.xml</Pattern>
@@ -213,8 +206,7 @@
 				</VulnSubcategory>
 				<DefaultSeverity>5.0</DefaultSeverity>
 				<Description>
-					<Abstract>The applications's Key Store Configuration should use a
-						configurable path.</Abstract>
+					<Abstract>The applications's Key Store Configuration should use a configurable path.</Abstract>
 				</Description>
 				<ConfigFile type="xml">
 					<Pattern>(.*)\.xml</Pattern>
@@ -239,8 +231,7 @@
 				<VulnSubcategory>Domain - Hard-coded Key Store configuration</VulnSubcategory>
 				<DefaultSeverity>5.0</DefaultSeverity>
 				<Description>
-					<Abstract>The domain's Key Store Configuration should use a
-						configurable path.</Abstract>
+					<Abstract>The domain's Key Store Configuration should use a configurable path.</Abstract>
 				</Description>
 				<ConfigFile type="xml">
 					<Pattern>(.*)\.xml</Pattern>
@@ -264,8 +255,7 @@
 				<VulnSubcategory>Domain - Insecure Trust Store</VulnSubcategory>
 				<DefaultSeverity>5.0</DefaultSeverity>
 				<Description>
-					<Abstract>The domain's Trust Store configuration should not have
-						the insecure attribute.</Abstract>
+					<Abstract>The domain's Trust Store configuration should not have the insecure attribute.</Abstract>
 				</Description>
 				<ConfigFile type="xml">
 					<Pattern>(.*)\.xml</Pattern>

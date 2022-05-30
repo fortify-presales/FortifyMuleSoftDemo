@@ -35,24 +35,8 @@ http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/
 		keyPassword="password" password="password" /> </tls:context> </http:listener-connection> 
 		</http:listener-config -->
 
-	<!-- Example HTTP requestor using application configuration -->
-	<http:request-config
-		name="HTTP_Request_configuration"
-		doc:name="HTTP Request configuration"
-		doc:id="a9911794-2dc2-4071-b8c4-1a170531bc0c" basePath="/sdfsfsdf"
-		defaultHeaders="#[vars.apiKey]">
-		<http:default-query-params>
-			<http:query-param key="apiKey"
-				value="#[vars.apiKey]" />
-		</http:default-query-params>
-		<http:default-headers>
-			<http:default-header key="apiKey"
-				value="#[vars.apiKey]" />
-		</http:default-headers>
-	</http:request-config>
-
 	<apikit:config name="products-api-routerConfig"
-		raml="products-api.raml" outboundHeadersMapName="outboundHeaders"
+		raml="store-api.raml" outboundHeadersMapName="outboundHeaders"
 		httpStatusVarName="httpStatus" />
 	<db:config name="products-api-dbConfig"
 		doc:name="Database Config"
@@ -205,7 +189,7 @@ output application/json
 
 		</error-handler>
 	</flow>
-	<flow name="products-console">
+	<flow name="api-console">
 		<http:listener config-ref="domain-httpListenerConfig"
 			path="/console/*">
 			<http:response
@@ -482,4 +466,120 @@ output application/json
 			</ee:message>
 		</ee:transform>
 	</flow>
+
+	<flow
+		name="get:\customers:products-api-routerConfig">
+		<logger level="INFO"
+			message="get:\customers:products-api-routerConfig" />
+		<ee:transform doc:name="Create response"
+			doc:id="7b72739c-4209-4857-8a2c-11111453992e">
+			<ee:message>
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+[
+	{
+	    "id": "eec467c8-5de9-4c7c-8541-7b31614d31a0",
+		"firstName": "John",
+		"lastName": "Doe",
+		"phone": "123456789",
+		"email": "john.doe@email.com"
+	},
+	{
+	    "id": "fbc467c8-5df9-2c7c-8541-1c31614d31a0",
+		"firstName": "Jane",
+		"lastName": "Doe",
+		"phone": "123456789",
+		"email": "jane.doe@email.com"
+	}
+]]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	
+	<flow
+		name="post:\customers:application\json:products-api-routerConfig">
+		<logger level="INFO"
+			message="post:\customers:application\json:products-api-routerConfig" />
+		<ee:transform doc:name="Create response"
+			doc:id="443c99f5-c700-4f5a-8d8b-39686820cbe3">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+    "id": "eec467c8-5de9-4c7c-8541-7b31614d31a0",
+	"firstName": "John",
+	"lastName": "Doe",
+	"phone": "123456789",
+	"email": "john.doe@email.com"
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+
+	<flow name="get:\customers\(customerId):products-api-routerConfig">
+		<logger level="INFO"
+			message="get:\customers\{customerId}:products-api-routerConfig" />
+		<ee:transform doc:name="Create response"
+			doc:id="a4aa7fda-6da0-439e-b14f-103f3f9ed718">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+    "id": "eec467c8-5de9-4c7c-8541-7b31614d31a0",
+	"firstName": "John",
+	"lastName": "Doe",
+	"phone": "123456789",
+	"email": "john.doe@email.com"
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+
+	<flow name="put:\customers\(customerId):application\json:products-api-routerConfig">
+		<logger level="INFO"
+			message="put:\customers\{customerId}:application\json:application\json:products-api-routerConfig" />
+		<ee:transform doc:name="Create response"
+			doc:id="a7d0dc11-d2b9-433d-8ceb-677407eac9d6">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+    "id": "eec467c8-5de9-4c7c-8541-7b31614d31a0",    
+	"firstName": "John",
+	"lastName": "Doe",
+	"phone": "123456789",
+	"email": "john.doe@email.com"
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	
+	<flow
+		name="delete:\customers\(customerId):products-api-routerConfig">
+		<logger level="INFO"
+			message="delete:\customers\(customerId):products-api-routerConfig" />
+		<ee:transform
+			xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+			xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd 
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd"
+			doc:id="1fa29370-349f-46f2-bce0-f05f2e1dd236">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: "The customer was deleted."
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+
 </mule>

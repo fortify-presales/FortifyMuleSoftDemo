@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RulePack xmlns="xmlns://www.fortifysoftware.com/schema/rules" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="RulePack">
+    <RulePackID>MuleSoft Test Rules</RulePackID>
+    <SKU>NA</SKU>
+    <Name><![CDATA[MuleSoft Rulepack]]></Name>
+    <Activated>true</Activated>
+    <Version>1.0</Version>
+    <Description>
+    	This is a prototype set of configuration rules for scanning MuleSoft files for security vulnerabilities.
+    </Description>
+    <Rules version="3.2">
+        <RuleDefinitions>  
+						<ConfigurationRule formatVersion="20.1">
+				<RuleID>44f591a4-87f8-4de3-a0c0-4ab0f524f2df</RuleID>
+				<MetaInfo>
+					<Group name="Accuracy">4.0</Group>
+					<Group name="Impact">5.0</Group>
+					<Group name="Probability">4.0</Group>
+					<Group name="PrimaryAudience">security</Group>
+					<Group name="RemediationEffort">1.0</Group>
+					<Group name="audience">broad</Group>
+				</MetaInfo>
+				<VulnKingdom>Security Features</VulnKingdom>
+				<VulnCategory>MuleSoft Misconfiguration</VulnCategory>
+				<VulnSubcategory>Domain - Insecure Trust Store</VulnSubcategory>
+				<DefaultSeverity>5.0</DefaultSeverity>
+				<Description>
+					<Abstract>The domain's Trust Store configuration should not have
+						the insecure attribute.</Abstract>
+				</Description>
+				<ConfigFile type="xml">
+					<Pattern>(.*)\.xml</Pattern>
+				</ConfigFile>
+				<XPathMatch 
+					expression="//*[local-name()='mule-domain' and namespace-uri()='http://www.mulesoft.org/schema/mule/ee/domain']//*[local-name()='context' and namespace-uri()='http://www.mulesoft.org/schema/mule/tls']/*[local-name()='trust-store' and namespace-uri()='http://www.mulesoft.org/schema/mule/tls' and (@insecure='true')]"
+					reporton="local-name()='trust-store' and namespace-uri()='http://www.mulesoft.org/schema/mule/tls'" />
+			</ConfigurationRule>
+			<ConfigurationRule formatVersion="20.1">
+				<RuleID>837c75ff-8a8a-497f-9b7b-4b71f41fe614</RuleID>
+				<MetaInfo>
+					<Group name="Accuracy">4.0</Group>
+					<Group name="Impact">5.0</Group>
+					<Group name="Probability">4.0</Group>
+					<Group name="PrimaryAudience">security</Group>
+					<Group name="RemediationEffort">1.0</Group>
+					<Group name="audience">broad</Group>
+				</MetaInfo>
+				<VulnKingdom>Security Features</VulnKingdom>
+				<VulnCategory>MuleSoft Misconfiguration</VulnCategory>
+				<VulnSubcategory>Domain - HTTP Requestor configuration uses dynamic default query params</VulnSubcategory>
+				<DefaultSeverity>5.0</DefaultSeverity>
+				<Description>
+					<Abstract>The domain's HTTP Requestor configuration should not use dynamic default query parameters.</Abstract>
+				</Description>
+				<ConfigFile type="xml">
+					<Pattern>(.*)\.xml</Pattern>
+				</ConfigFile>
+				<!-- TODO: rule contains a valid XPathExpression but not currently working -->	
+				<XPathMatch
+					expression="//*[local-name()='mule-domain' and namespace-uri()='http://www.mulesoft.org/schema/mule/ee/domain']//*[local-name()='default-headers' and namespace-uri()='http://www.mulesoft.org/schema/mule/http']/*[local-name()='default-header' and namespace-uri()='http://www.mulesoft.org/schema/mule/http' and matches(@value,'^#\[.*\]$')]"
+					reporton="//*[local-name()='default-header' and namespace-uri()='http://www.mulesoft.org/schema/mule/http']" />
+			</ConfigurationRule>
+        </RuleDefinitions>
+    </Rules>
+</RulePack>

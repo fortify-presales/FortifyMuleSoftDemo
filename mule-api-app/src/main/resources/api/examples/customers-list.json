@@ -1,0 +1,16 @@
+[
+  {
+      "id": "eec467c8-5de9-4c7c-8541-7b31614d31a0",
+      "firstName": "John",
+      "lastName": "Doe",
+      "phone": "001 742 123123",
+      "email": "john.doe@email.com"
+  },
+    {
+      "id": "fbc467c8-5df9-2c7c-8541-1c31614d31a0",
+      "firstName": "Jane",
+      "lastName": "Doe",
+      "phone": "001 742 456456",
+      "email": "jane.doe@email.com"
+  }
+]

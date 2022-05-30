@@ -1,0 +1,323 @@
+#%RAML 1.0
+title: Store API
+version: v1.0
+mediaType: application/json
+protocols: [ HTTP, HTTPS ]
+
+documentation:
+  - title: Home
+    content: |
+      This is a prototype Online Store API.
+  - title: Getting Started
+    content: |
+      TODO
+    
+securitySchemes:
+  basic:
+    description: |
+      This API supports Basic Authentication.
+    type: Basic Authentication
+    describedBy:
+      headers:
+        Authorization: 
+          description: Base64-encoded "username:password"
+        type: string
+      responses:
+        401:
+          description: |
+            Unauthorized: username or password or the combination is invalid.
+          
+securedBy: [basic]
+
+types:
+  customer:
+    description: |
+      An individual customer.
+    properties:
+      id?: string
+      firstName?: string
+      lastName?: string
+      phone?: string
+      email?: string      
+  product:
+    description: |
+      An individual product.
+    properties:
+      id?: string
+      code: string
+      name: string
+      summary: string
+      description: string
+      image: string
+      price: number
+      onSale: boolean
+      salePrice: number
+      inStock: boolean
+      timeToStock: number
+      rating: number
+      available: boolean
+  stock:
+    description: |
+      The stock level of an individual product.
+    properties:
+      productId: string
+      quantity: number
+
+/customers:
+  description: Customers API.
+  get:
+    description: |
+      Get a list of customers.
+    responses:
+      200:
+        body:
+          application/json:
+            type: customer[]
+            examples:
+              output: !include examples/customers-list.json      
+  post:
+    description: |
+      Create a new customer.
+    body:
+      application/json:
+        type: customer
+        example: !include examples/customer-new.json
+    responses:
+      200:
+        body:
+          application/json:
+            type: customer
+            examples: 
+              output: !include examples/customer-list.json
+      500:
+        body:
+          application/json:
+            properties:
+              message: string
+            example: |
+              {
+                "message": "The customer could not be created."
+              }         
+  /{customerId}:
+    get:
+      description: Retrieve a specific customer using their ID.
+    put:
+      description: Update a single customer
+      body:
+        application/json:
+          type: customer
+          example: !include examples/customer-update.json
+      responses:
+        200:
+          body:
+            application/json:
+              properties:
+                customerId: string
+              example: |
+                {
+                  "customerId": "132a3cc0-63d4-4ba4-af2c-84cf543168a6"
+                }
+        404:
+          body:
+            application/json:
+              properties:
+                message: string
+              example: |
+                {
+                  "message": "The customer could not be found."
+                }                
+        500:
+          body:
+            application/json:
+              properties:
+                message: string
+              example: |
+                {
+                  "message": "The customer could not be updated."
+                }             
+    delete:
+      description: |
+        Delete a single customer.
+      responses:
+        200:
+          body:
+            application/json:
+              properties:
+                message: string
+              example: |
+                {
+                  "message": "The customer was deleted."
+                }
+        404:
+          body:
+            application/json:
+              properties:
+                message: string
+              example: |
+                {
+                  "message": "The customer could not be found."
+                }                
+        500:
+          body:
+            application/json:
+              properties:
+                message: string
+              example: |
+                {
+                  "message": "The customer could not be deleted."
+                }              
+                               
+/products:
+  description: |
+    Products API.
+  get:
+    description: |
+      Get a list of products.     
+    queryParameters:
+      q:
+        description: |
+          Search phrase to look for products.
+        type: string
+        required: false
+    responses: 
+      200:
+        body:
+          application/json:
+            type: product[]
+            examples: 
+              output: !include examples/products-list.json            
+  post:
+    description: |
+      Create a new product.
+    body:
+      application/json:
+        type: product
+        example: !include examples/product-new-update.json
+    responses:
+      200:
+        body:
+          application/json:
+            type: product
+            examples: 
+              output: !include examples/product-list.json
+      500:
+        body:
+          application/json:
+            properties:
+              message: string
+            example: |
+              {
+                "message": "The product could not be created."
+              }                                       
+  /{productId}:
+    description: | 
+      Retrieve a specific product using its ID.
+    uriParameters:
+      productId: 
+        displayName: Product ID
+        type: string
+    get:
+      description: |
+        Get a single product
+      responses: 
+        200:
+          body:
+            application/json:
+              type: product
+              examples: 
+                output: !include examples/product-list.json
+        404:
+          body: 
+            application/json:
+              properties:
+                message: string
+              example: |
+                {
+                  "message" : "The product could not be found."
+                }
+    put:
+      description: |
+        Update a single product.
+      body:
+        application/json:
+          type: product
+          example: !include examples/product-new-update.json
+      responses:
+        200:
+          body:
+            application/json:
+              properties:
+                productId: string
+              example: |
+                {
+                  "productId": "132a3cc0-63d4-4ba4-af2c-84cf543168a6"
+                }
+        404:
+          body:
+            application/json:
+              properties:
+                message: string
+              example: |
+                {
+                  "message": "The product could not be found."
+                }                
+        500:
+          body:
+            application/json:
+              properties:
+                message: string
+              example: |
+                {
+                  "message": "The product could not be updated."
+                }   
+    delete:
+      description: |
+        Delete a single product.
+      responses:
+        200:
+          body:
+            application/json:
+              properties:
+                message: string
+              example: |
+                {
+                  "message": "The product was deleted."
+                }
+        404:
+          body:
+            application/json:
+              properties:
+                message: string
+              example: |
+                {
+                  "message": "The product could not be found."
+                }                
+        500:
+          body:
+            application/json:
+              properties:
+                message: string
+              example: |
+                {
+                  "message": "The product could not be deleted"
+                }                                               
+    /stockLevel:
+      description: | 
+        Get the stock level of a single product.
+      get:
+        responses: 
+          200:
+            body:
+              application/json:
+                type: stock
+                examples: 
+                  output: !include examples/stock-list.json
+          404:
+            body: 
+              application/json:
+                properties:
+                  message: string
+                example: |
+                  {
+                    "message" : "The product could not be found."
+                  }    

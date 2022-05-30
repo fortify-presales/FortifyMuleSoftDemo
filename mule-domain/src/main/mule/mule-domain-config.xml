@@ -1,45 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <domain:mule-domain
-xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+	xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
 	xmlns:http="http://www.mulesoft.org/schema/mule/http"
-	        xmlns="http://www.mulesoft.org/schema/mule/core"
-        xmlns:domain="http://www.mulesoft.org/schema/mule/ee/domain"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-        xsi:schemaLocation="
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:domain="http://www.mulesoft.org/schema/mule/ee/domain"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd 
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
                http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
                http://www.mulesoft.org/schema/mule/ee/domain http://www.mulesoft.org/schema/mule/ee/domain/current/mule-domain-ee.xsd">
 
-    <configuration-properties file="configuration.yaml"/>
+	<configuration-properties
+		file="configuration.yaml" />
 
-    <!-- resources to be shared within the domain -->
-	
-    <http:listener-config name="domain-httpListenerConfig">
-        <http:listener-connection host="0.0.0.0" port="${https.port}" protocol="HTTPS">
-		   	<tls:context name="serverTlscontext" enabledProtocols="TLSv1.2">
-		        <tls:trust-store type="jceks" insecure="true"/>
-				<tls:key-store type="pkcs12" path="ssl/server-dev-keystore.p12" alias="server" keyPassword="password" password="password" />
-		    </tls:context>
-        </http:listener-connection>
-    </http:listener-config>
-	
+	<!-- configure here resource to be shared within the domain -->
+	<http:listener-config
+		name="domain-httpListenerConfig">
+		<http:listener-connection host="0.0.0.0"
+			port="${https.port}" protocol="HTTPS">
+			<tls:context name="serverTlscontext"
+				enabledProtocols="TLSv1.2">
+				<tls:trust-store type="jceks" insecure="true" />
+				<tls:key-store type="pkcs12"
+					path="ssl/server-dev-keystore.p12" alias="server"
+					keyPassword="password" password="password" />
+			</tls:context>
+		</http:listener-connection>
+	</http:listener-config>
+
 	<http:request-config
-            name="domain-httpRequestConfig" doc:name="HTTP Request configuration"
-            doc:id="bffcdead-ddfb-4c89-ba42-95fb011454a2"
-            basePath="/api/v7/convert" responseTimeout="10">
-            <http:request-connection
-                    host="free.currconv.com" />
-            <http:default-headers>
-                    <http:default-header key="apiKey"
-                        value="#[vars.apiKey]" />
-            </http:default-headers>
-            <http:default-query-params>
-                    <http:query-param key="apiKey"
-                        value="#[vars.apiKey]" />
-            </http:default-query-params>
-    </http:request-config>
-    
+		name="domain-httpRequestConfig" doc:name="HTTP Request configuration"
+		doc:id="bffcdead-ddfb-4c89-ba42-95fb011454a2"
+		basePath="/api/v7/convert" responseTimeout="10">
+		<http:request-connection
+			host="free.currconv.com" />
+		<http:default-headers>
+			<http:default-header key="apiKey"
+				value="#[vars.apiKey]" />
+		</http:default-headers>
+		<http:default-query-params>
+			<http:query-param key="apiKey"
+				value="#[vars.apiKey]" />
+		</http:default-query-params>
+	</http:request-config>
 
 </domain:mule-domain>
