@@ -14,6 +14,7 @@
 	<Rules version="3.2">
 		<RuleDefinitions>
 			<!-- HTTP Listener Configuration rules -->
+			
 			<ConfigurationRule formatVersion="20.1">
 				<RuleID>CD3402F5-E945-44CB-9794-EAA75CA50A07</RuleID>
 				<MetaInfo>
@@ -64,7 +65,7 @@
 
 
 			<!-- Database Configuration rules -->
-			
+			<!--   MySQL -->
 			<ConfigurationRule formatVersion="20.1">
 				<RuleID>ff8867a4-cacb-11ec-9d64-0242ac120002</RuleID>
 				<MetaInfo>
@@ -113,6 +114,105 @@
 					expression="count(//*:mule/db:config/db:my-sql-connection) > 0 and not(matches(//*:mule/db:config/db:my-sql-connection/@password, '^\$\{.*\}$'))"
 					reporton="//*[local-name()='my-sql-connection']" />
 			</ConfigurationRule>
+			<ConfigurationRule formatVersion="20.1">
+				<RuleID>d23fd78f-36ac-45ec-b900-90544cf4af4c</RuleID>
+				<MetaInfo>
+					<Group name="Accuracy">4.0</Group>
+					<Group name="Impact">5.0</Group>
+					<Group name="Probability">4.0</Group>
+					<Group name="PrimaryAudience">security</Group>
+					<Group name="RemediationEffort">1.0</Group>
+					<Group name="audience">broad</Group>
+				</MetaInfo>
+				<VulnKingdom>Security Features</VulnKingdom>
+				<VulnCategory>Insecure SSL</VulnCategory>
+				<VulnSubcategory>MySQL - SSL communication disabled</VulnSubcategory>
+				<DefaultSeverity>5.0</DefaultSeverity>
+				<Description>
+					<Abstract>MySQL - The SSL communication between client and server should not be disable.</Abstract>
+				</Description>
+				<ConfigFile type="xml">
+					<Pattern>(.*)\.xml</Pattern>
+				</ConfigFile>
+				<XPathMatch
+					expression="count(//*:mule/db:config/db:my-sql-connection/db:connection-properties) > 0 and (matches(//*:mule/db:config/db:my-sql-connection/db:connection-properties/db:connection-property/@key, 'useSSL') and matches(//*:mule/db:config/db:my-sql-connection/db:connection-properties/db:connection-property/@value, 'false', 'i'))"
+					reporton="//*[local-name()='connection-property']" />
+			</ConfigurationRule>
+			<!--   Microsoft SQL Server -->
+			<ConfigurationRule formatVersion="20.1">
+				<RuleID>1bbb6ad7-c40d-4797-81f8-f1debdc17873</RuleID>
+				<MetaInfo>
+					<Group name="Accuracy">4.0</Group>
+					<Group name="Impact">4.0</Group>
+					<Group name="Probability">3.0</Group>
+					<Group name="PrimaryAudience">security</Group>
+					<Group name="RemediationEffort">1.0</Group>
+					<Group name="audience">broad</Group>
+				</MetaInfo>
+				<VulnKingdom>Security Features</VulnKingdom>
+				<VulnCategory>MuleSoft Bad Practice</VulnCategory>
+				<VulnSubcategory>MSSQL - hardcoded database host</VulnSubcategory>
+				<DefaultSeverity>2.0</DefaultSeverity>
+				<Description>
+					<Abstract>Microsoft SQL Server - The database host name should not be a hardcoded value.</Abstract>
+				</Description>
+				<ConfigFile type="xml">
+					<Pattern>(.*)\.xml</Pattern>
+				</ConfigFile>
+				<XPathMatch
+					expression="count(//*:mule/db:config/db:mssql-connection) > 0 and not(matches(//*:mule/db:config/db:mssql-connection/@host, '^\$\{.*\}$'))"
+					reporton="//*[local-name()='mssql-connection']" />
+			</ConfigurationRule>
+			<ConfigurationRule formatVersion="20.1">
+				<RuleID>30bfb5bd-6f7c-4137-8e1f-67209a3bd9c9</RuleID>
+				<MetaInfo>
+					<Group name="Accuracy">4.0</Group>
+					<Group name="Impact">5.0</Group>
+					<Group name="Probability">4.0</Group>
+					<Group name="PrimaryAudience">security</Group>
+					<Group name="RemediationEffort">1.0</Group>
+					<Group name="audience">broad</Group>
+				</MetaInfo>
+				<VulnKingdom>Security Features</VulnKingdom>
+				<VulnCategory>Password Management</VulnCategory>
+				<VulnSubcategory>MSSQL - hardcoded password</VulnSubcategory>
+				<DefaultSeverity>5.0</DefaultSeverity>
+				<Description>
+					<Abstract>Microsoft SQL Server - The password should not be a hardcoded value.</Abstract>
+				</Description>
+				<ConfigFile type="xml">
+					<Pattern>(.*)\.xml</Pattern>
+				</ConfigFile>
+				<XPathMatch
+					expression="count(//*:mule/db:config/db:mssql-connection) > 0 and not(matches(//*:mule/db:config/db:mssql-connection/@password, '^\$\{.*\}$'))"
+					reporton="//*[local-name()='mssql-connection']" />
+			</ConfigurationRule>	
+			<ConfigurationRule formatVersion="20.1">
+				<RuleID>5b1f2e93-2b22-4727-9272-de4351692481</RuleID>
+				<MetaInfo>
+					<Group name="Accuracy">4.0</Group>
+					<Group name="Impact">5.0</Group>
+					<Group name="Probability">4.0</Group>
+					<Group name="PrimaryAudience">security</Group>
+					<Group name="RemediationEffort">1.0</Group>
+					<Group name="audience">broad</Group>
+				</MetaInfo>
+				<VulnKingdom>Security Features</VulnKingdom>
+				<VulnCategory>Insecure SSL</VulnCategory>
+				<VulnSubcategory>MySQL - SSL communication disabled</VulnSubcategory>
+				<DefaultSeverity>5.0</DefaultSeverity>
+				<Description>
+					<Abstract>MySQL - The SSL communication between client and server should not be disable.</Abstract>
+				</Description>
+				<ConfigFile type="xml">
+					<Pattern>(.*)\.xml</Pattern>
+				</ConfigFile>
+				<XPathMatch
+					expression="count(//*:mule/db:config/db:mssql-connection/db:connection-properties) > 0 and (matches(//*:mule/db:config/db:mssql-connection/db:connection-properties/db:connection-property/@key, 'useSSL') and matches(//*:mule/db:config/db:mssql-connection/db:connection-properties/db:connection-property/@value, 'false', 'i'))"
+					reporton="//*[local-name()='connection-property']" />
+			</ConfigurationRule>	
+			<!--   Oracle: TODO -->				
+			
 			<!-- MuleSoft Logger rules -->
 			<ConfigurationRule formatVersion="20.1">
 				<RuleID>3568c4b7-c478-4742-9809-b86a1a89c4ee</RuleID>
@@ -136,9 +236,10 @@
 				</ConfigFile>
 				<!-- TODO: rule contains a valid XPathExpression but not currently working -->			
 				<XPathMatch
-					expression="count(//*:mule/flow/logger) > 0 and contains(//*:mule/flow/logger/@message, '${mule.key}')"
+					expression="count(//*:mule/flow/logger) > 0 and (//*:mule/flow/logger/@message[contains(., '${mule.key}')])"
 					reporton="//*[local-name()='logger']" />
 			</ConfigurationRule>
+			
 			<!-- APIKit rules -->
 			<ConfigurationRule formatVersion="20.1">
 				<RuleID>e9252a92-56c8-498b-a5de-67fefdb60d0b</RuleID>
@@ -151,19 +252,20 @@
 					<Group name="audience">broad</Group>
 				</MetaInfo>
 				<VulnKingdom>Security Features</VulnKingdom>
-				<VulnCategory>AutoDiscovery</VulnCategory>
-				<VulnSubcategory>AutoDiscovery should be used to register the app in API manager</VulnSubcategory>
-				<DefaultSeverity>5.0</DefaultSeverity>
+				<VulnCategory>MuleSoft Misconfiguration</VulnCategory>
+				<VulnSubcategory>AutoDiscovery not enabled</VulnSubcategory>
+				<DefaultSeverity>4.0</DefaultSeverity>
 				<Description>
-					<Abstract>AutoDiscovery should be used to register the app in API manager.</Abstract>
+					<Abstract>AutoDiscovery should be used to register the application automatically in API manager.</Abstract>
 				</Description>
 				<ConfigFile type="xml">
 					<Pattern>(.*)\.xml</Pattern>
 				</ConfigFile>
 				<XPathMatch
-					expression="count(//*:mule/api-platform-gw:api) = 1 and (//*:mule/api-platform-gw:api/@create = true)"
-					reporton="//*[local-name()='api-platform-gw:ap']" />
+					expression="count(//*[local-name()='config' and namespace-uri()='http://www.mulesoft.org/schema/mule/mule-apikit']) and count(//*[local-name()='autodiscovery' and namespace-uri()='http://www.mulesoft.org/schema/mule/api-gateway']) = 0"
+					reporton="//*[local-name()='autodiscovery']" />
 			</ConfigurationRule>
+			
 			<!-- Application TLS Context Configuration rules -->			
 			<ConfigurationRule formatVersion="20.1">
 				<RuleID>b1088ff6-4287-455d-87d7-47929e6eae12</RuleID>

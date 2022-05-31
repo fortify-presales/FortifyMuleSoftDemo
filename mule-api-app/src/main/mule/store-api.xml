@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns:java="http://www.mulesoft.org/schema/mule/java"
+<mule xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway"
+	xmlns:java="http://www.mulesoft.org/schema/mule/java"
 	xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
 	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
 	xmlns:spring="http://www.mulesoft.org/schema/mule/spring"
@@ -8,13 +9,13 @@
 	xmlns="http://www.mulesoft.org/schema/mule/core"
 	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
 	xmlns:http="http://www.mulesoft.org/schema/mule/http"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
 http://www.mulesoft.org/schema/mule/spring http://www.mulesoft.org/schema/mule/spring/current/mule-spring.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
 http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd
-http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd">
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd">
 
 	<spring:config name="products-api-springConfig"
 		files="beans.xml" />
@@ -42,12 +43,29 @@ http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/
 			port="3306" user="fortifymule" password="fortifymule"
 			database="fortifymule">
 			<db:connection-properties>
-				<db:connection-property key="useSSL"
-					value="false" />
+				<db:connection-property key="useSSL" value="false" />
 			</db:connection-properties>
 		</db:my-sql-connection>
 	</db:config>
 
+	<!-- Example Microsoft SQL server configuration -->
+	<!--  db:config name="products-api-mssql-dbConfig"
+		doc:name="Database Config"
+		doc:id="93c8a3e3-24fe-4bd9-9f63-6f26815e9c64">
+		<db:mssql-connection host="localhost" user="sa"
+			password="password" databaseName="fortifymule">
+			<db:connection-properties>
+				<db:connection-property key="useSSL" value="false" />
+			</db:connection-properties>
+		</db:mssql-connection>
+	</db:config -->
+
+	<!-- API Auto Discovery should be enabled - commented out for vulnerability -->
+	<!-- api-gateway:autodiscovery apiId="${api.autodiscoveryID}"
+		ignoreBasePath="true" doc:name="API Autodiscovery"
+		doc:id="dd1440c7-28fa-46cb-a13d-afe811c16f77"
+		flowRef="products-main" /-->
+	
 	<flow name="products-main">
 		<http:listener config-ref="domain-httpListenerConfig"
 			path="${store-api.http-listener.path}">
@@ -64,8 +82,7 @@ http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/
 		<http:basic-security-filter realm="mule" />
 		<spring:authorization-filter
 			requiredAuthorities="ROLE_ADMIN" />
-		<logger level="DEBUG" doc:name="Logger"
-			message="Basic Authentication Successful" />
+		<logger level="DEBUG" doc:name="Logger" message="Basic Authentication Successful" />
 		<apikit:router config-ref="products-api-routerConfig" />
 		<error-handler>
 			<on-error-propagate type="APIKIT:BAD_REQUEST">
@@ -220,6 +237,7 @@ output application/json
 		</error-handler>
 	</flow>
 	<flow name="get:\products:products-api-routerConfig">
+		<logger level="DEBUG" doc:name="Logger" doc:id="b17518ca-16b5-428d-806d-60fb4d833ad8" message="Retrieving secure database credentials use key: ${mule.key}"/>
 		<db:select doc:name="Select"
 			doc:id="58a1a27a-cad0-11ec-9d64-0242ac120002"
 			config-ref="products-api-dbConfig" queryTimeoutUnit="MILLISECONDS">
@@ -464,14 +482,13 @@ output application/json
 		</ee:transform>
 	</flow>
 
-	<flow
-		name="get:\customers:products-api-routerConfig">
+	<flow name="get:\customers:products-api-routerConfig">
 		<logger level="INFO"
 			message="get:\customers:products-api-routerConfig" />
 		<ee:transform doc:name="Create response"
 			doc:id="7b72739c-4209-4857-8a2c-11111453992e">
 			<ee:message>
-				<ee:set-payload ><![CDATA[%dw 2.0
+				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 [
@@ -493,7 +510,7 @@ output application/json
 			</ee:message>
 		</ee:transform>
 	</flow>
-	
+
 	<flow
 		name="post:\customers:application\json:products-api-routerConfig">
 		<logger level="INFO"
@@ -537,7 +554,8 @@ output application/json
 		</ee:transform>
 	</flow>
 
-	<flow name="put:\customers\(customerId):application\json:products-api-routerConfig">
+	<flow
+		name="put:\customers\(customerId):application\json:products-api-routerConfig">
 		<logger level="INFO"
 			message="put:\customers\{customerId}:application\json:application\json:products-api-routerConfig" />
 		<ee:transform doc:name="Create response"
@@ -557,7 +575,7 @@ output application/json
 			</ee:message>
 		</ee:transform>
 	</flow>
-	
+
 	<flow
 		name="delete:\customers\(customerId):products-api-routerConfig">
 		<logger level="INFO"
