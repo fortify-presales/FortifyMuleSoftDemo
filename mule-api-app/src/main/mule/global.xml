@@ -1,12 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
-	
-	<global-property doc:name="Global Property-mule.env" doc:id="f938a2f3-6ef2-4c11-947a-fe28ab917344" name="mule.env" value="dev" />
-    <global-property doc:name="Global Property-mule.key" doc:id="7dbecfaa-78dc-4db8-8f24-49ab1bd4b689" name="mule.key" value="FortifyDemo123456" />
-    
-    <configuration-properties doc:name="configuration-properties-based-on-env" doc:id="df8d10cb-0d18-4c69-9392-2378ec393880" file="config/config-${mule.env}.yaml" />
-    
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd">
+
+	<global-property doc:name="Global Property-mule.env"
+		doc:id="f938a2f3-6ef2-4c11-947a-fe28ab917344" name="mule.env"
+		value="local" />
+	<global-property doc:name="Global Property-mule.key"
+		doc:id="7dbecfaa-78dc-4db8-8f24-49ab1bd4b689" name="mule.key"
+		value="FortifyDemo123456" />
+
+	<configuration-properties
+		doc:name="configuration-properties-based-on-env"
+		doc:id="df8d10cb-0d18-4c69-9392-2378ec393880"
+		file="config/config-${mule.env}.yaml" />
+	<secure-properties:config
+		name="Secure_Properties_Config"
+		doc:name="secure-configuration-properties-based-on-env"
+		doc:id="c86e9377-f178-4644-a050-85ed9337f86d"
+		file="config/config-secured-${mule.env}.yaml" key="${mule.key}" />
 </mule>

@@ -5,21 +5,38 @@
 	xmlns="http://www.mulesoft.org/schema/mule/core"
 	xmlns:domain="http://www.mulesoft.org/schema/mule/ee/domain"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xsi:schemaLocation="
-http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd 
-http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
-               http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-               http://www.mulesoft.org/schema/mule/ee/domain http://www.mulesoft.org/schema/mule/ee/domain/current/mule-domain-ee.xsd">
+		http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd 
+		http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+		http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
+        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/ee/domain http://www.mulesoft.org/schema/mule/ee/domain/current/mule-domain-ee.xsd">
+
+	<global-property doc:name="Global Property-mule.env"
+		doc:id="f4c85965-4e72-4633-833a-e2c8c5b9177b" name="mule.env"
+		value="local" />
+	<global-property doc:name="Global Property-mule.key"
+		doc:id="25300859-6460-4f1e-acb6-237a934e1b9b" name="mule.key"
+		value="FortifyDemo123456" />
 
 	<configuration-properties
-		file="configuration.yaml" />
+		doc:name="configuration-properties-based-on-env"
+		doc:id="31131c7d-485a-420b-a2f8-abbe5a94eb0d"
+		file="config/config-${mule.env}.yaml" />
+
+	<secure-properties:config
+		name="secure-configuration-properties-based-on-env"
+		doc:name="Secure Properties Config"
+		doc:id="f974d295-80d7-40ff-85e1-79b5eee1937f"
+		file="config/config-secured-${mule.env}.yaml" key="${mule.key}" />
 
 	<!-- configure here resource to be shared within the domain -->
 	<http:listener-config
 		name="domain-httpListenerConfig">
-		<http:listener-connection host="0.0.0.0"
-			port="${https.port}" protocol="HTTPS">
+		<http:listener-connection
+			host="${https.host}" port="${https.port}" protocol="HTTPS">
 			<tls:context name="serverTlscontext"
 				enabledProtocols="TLSv1.2">
 				<tls:trust-store type="jceks" insecure="true" />

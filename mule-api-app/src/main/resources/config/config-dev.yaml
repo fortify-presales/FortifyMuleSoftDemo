@@ -15,21 +15,18 @@ store-api:
   http-listener:
     path: "/api/*"
 
-# Retry configuration 
-retry:
-   amq: 
-    delayMillisecs: "3000"
-    numRetries: "3"
+# MySQL configuration
+mysql:
+  host: "localhost"
+  port: "3306"
+  user: "fortifymule"
+  password: "fortifymule"
+  
+# TLS configuration
 tls:
     keyStorepass: "password"
     password: "password"
     
-# Reconnect configuration 
-reconnection:
-     amq:
-      frequency: "2000"
-      attempts: "2"
-
 # Customize the application messages in the below section
 application-msgs:
   #Local Exception logger message

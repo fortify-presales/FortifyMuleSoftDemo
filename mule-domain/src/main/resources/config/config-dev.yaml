@@ -1,0 +1,16 @@
+  
+# Listener configuration  
+https:
+  host: "0.0.0.0"
+  port: "8082"
+  
+# TLS Configuration
+tls:
+    keyStorepass: "password"
+    password: "password"
+    
+# Customize the application messages in the below section
+application-msgs:
+  #Local Exception logger message
+  local-exception-handler-message: "Exception has occured"
+  success-flag: "true"

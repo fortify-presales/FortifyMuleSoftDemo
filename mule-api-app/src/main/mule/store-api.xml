@@ -16,9 +16,6 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd
 http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd">
 
-	<configuration-properties
-		file="configuration.yaml" />
-
 	<spring:config name="products-api-springConfig"
 		files="beans.xml" />
 
@@ -53,7 +50,7 @@ http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/
 
 	<flow name="products-main">
 		<http:listener config-ref="domain-httpListenerConfig"
-			path="/api/*">
+			path="${store-api.http-listener.path}">
 			<http:response
 				statusCode="#[vars.httpStatus default 200]">
 				<http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
