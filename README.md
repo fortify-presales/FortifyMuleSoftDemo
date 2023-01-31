@@ -1,15 +1,13 @@
 Fortify MuleSoft Demo
 =====================
 
-This is an example [Mulesoft Anypoint](https://www.mulesoft.com/platform/enterprise-integration) project that includes 
-[Fortify Static Code Analyzer](https://www.microfocus.com/en-us/cyberres/application-security/static-code-analyzer) 
-custom rules for vulnerability scanning of Mulesoft's XML configuration files. 
+This is an example [Mulesoft Anypoint](https://www.mulesoft.com/platform/enterprise-integration) project that can be
+used for [Fortify Static Code Analyzer](https://www.microfocus.com/en-us/cyberres/application-security/static-code-analyzer) 
+vulnerability scanning of Mulesoft's XML configuration files. 
 
 The example includes a MuleSoft domain project (where global configuration is typically set) and an [APIKit](https://docs.mulesoft.com/apikit)
 application project. The application project exposes a MySQL database as a REST API. It also includes a [Postman](https://www.postman.com/) collection so that
-the deployed API can be tesed and vulnerability scanned using [Fortify WebInspect](https://www.microfocus.com/en-us/cyberres/application-security/webinspect) (or ScanCentral DAST).
-
-*PLEASE NOTE: This is a work in progress and is not officially supported by Micro Focus.*
+the deployed API can be tested and vulnerability scanned using [Fortify WebInspect](https://www.microfocus.com/en-us/cyberres/application-security/webinspect) (or ScanCentral DAST).
 
 **Environment Setup**
 
@@ -39,20 +37,14 @@ SSC_AUTH_TOKEN_BASE64=YYYYY...
 SSC_APP_NAME=FortifyMuleSoftDemo
 # Name of the application version in SSC
 SSC_APP_VER_NAME=main
-SCANCENTRAL_CTRL_URL=http://YOUR_SCANCENTRAL_CONTROLLER_URL
-SCANCENTRAL_CTRL_TOKEN=XXX...
-SCANCENTRAL_POOL_ID=00000000-0000-0000-0000-000000000002
-SCANCENTRAL_EMAIL=your_email@somewhere.com
-SCANCENTRAL_DAST_API=http://YOUR_SCANCENTRAL_DAST_URL
-SCANCENTRAL_DAST_CICD_TOKEN=YYY...
 ```
 
 *NOTE: do not place this file under source control*
 
 **Creating the MySQL database**
 
-To create the required MySQL database, first install [MySQL](https://www.mysql.com/) and then as a priviledged MySQL user (e.g. root) execute
-the following:
+To create the required MySQL database, first install [MySQL](https://www.mysql.com/) and then as a privileged 
+MySQL user (e.g. root) execute the following:
 
 ```
 mysql -u root -p
@@ -87,10 +79,10 @@ TBD
 To execute a Fortify Static Code Analyzer SAST scan, run the following commands from the root directory of the project:
 
 ```
-sourceanalyzer -verbose -rules rules/mulesoft_rules.xml -scan mule-domain/src/main/ mule-api-app/src/main/
+sourceanalyzer -verbose -scan mule-domain/src/main/ mule-api-app/src/main/
 ```
 
-or you can use the provided PowerShell script [bin\fortify_sca.ps1]:
+or you can use the provided PowerShell script [bin\fortify_sast.ps1]:
 
 ```
 powershell bin\fortify-sca.ps1 -SkipSSC
@@ -109,26 +101,36 @@ You should see output similar to the following:
 ```
 Issue counts by analyzer:
 
- "configuration" => 9 Issues
-     mule-api-app/src/main/mule/store-api.xml:46 (MuleSoft Bad Practice: MySQL - hardcoded database host)
-     mule-api-app/src/main/mule/store-api.xml:46 (Password Management: MySQL - hardcoded password)
-     mule-domain/src/main/mule/mule-domain-config.xml:0 (MuleSoft Misconfiguration: Domain - Hard-coded Key Store configuration)
-     mule-domain/src/main/mule/mule-domain-config.xml:22 (MuleSoft Misconfiguration: HTTP(S) port not configured)
-     mule-domain/src/main/mule/mule-domain-config.xml:25 (MuleSoft Misconfiguration: Domain - Insecure Trust Store)
-     mule-domain/src/main/mule/mule-domain-config.xml:41 (MuleSoft Misconfiguration: Domain - HTTP Requestor configuration uses dynamic default query params)
-     mule-domain/src/main/mule/mule-domain-config.xml:45 (MuleSoft Misconfiguration: Domain - HTTP Requestor configuration uses dynamic default headers)
+ "configuration" => 13 Issues
+     mule-api-app/src/main/mule/store-api.xml:34 (Password Management: Password in Comment)
+     mule-api-app/src/main/mule/store-api.xml:44 (Mule Misconfiguration: Hardcoded Password)
+     mule-api-app/src/main/mule/store-api.xml:44 (Mule Misconfiguration: Insecure Database Transport)
+     mule-api-app/src/main/mule/store-api.xml:44 (Password Management: Password in Configuration File)
+     mule-api-app/src/main/mule/store-api.xml:61 (Password Management: Password in Comment)
+     mule-api-app/src/main/resources/beans.xml:19 (Password Management: Password in Configuration File)
+     mule-api-app/src/main/resources/beans.xml:20 (Password Management: Password in Configuration File)
+     mule-api-app/src/main/resources/beans.xml:21 (Password Management: Password in Configuration File)
+     mule-api-app/src/main/resources/beans.xml:22 (Password Management: Password in Configuration File)
+     mule-domain/src/main/mule/mule-domain-config.xml:42 (Mule Misconfiguration: Server Identity Verification Disabled)
+     mule-domain/src/main/mule/mule-domain-config.xml:45 (Password Management: Password in Configuration File)
      mule-domain/src/main/resources/ssl/server-dev-keystore.p12:0 (Key Management: Hardcoded Encryption Key)
      mule-domain/src/main/resources/ssl/trusted-client-truststore.p12:0 (Key Management: Hardcoded Encryption Key)
  "semantic" => 2 Issues
      mule-api-app/src/main/java/com/microfocus/example/StockService.java:18 (Insecure Randomness)
      mule-api-app/src/main/java/com/microfocus/example/StockService.java:26 (Insecure Randomness)
- "structural" => 1 Issues
+ "structural" => 7 Issues
      mule-api-app/src/main/java/com/microfocus/example/StockService.java:31 (J2EE Bad Practices: Leftover Debug Code)
+     mule-api-app/src/main/resources/config/config-dev.yaml:22 (Password Management: Hardcoded Password)
+     mule-api-app/src/main/resources/config/config-dev.yaml:27 (Password Management: Hardcoded Password)
+     mule-api-app/src/main/resources/config/config-local.yaml:22 (Password Management: Hardcoded Password)
+     mule-api-app/src/main/resources/config/config-local.yaml:27 (Password Management: Hardcoded Password)
+     mule-domain/src/main/resources/config/config-dev.yaml:9 (Password Management: Hardcoded Password)
+     mule-domain/src/main/resources/config/config-local.yaml:9 (Password Management: Hardcoded Password)
 
-Total for all analyzers => 12 Issues
+Total for all analyzers => 22 Issues
 ```
 
-Note: because the API project also contains some Java beans and encryption keys - these issues are found using existing rules.
+Note: because the API project also contains some Java beans and encryption keys - these issues are also found.
 
 **Fortify WebInpsect (DAST) scan**
 
@@ -139,7 +141,7 @@ Then start the application, load the Postman collection into WebInspect and then
 
 **Fortify ScanCentral DAST scan**
 
-A Postman collection is included so that the deployed API can also be vulnerability scanned with Fortify ScanCentral DAST.
+A Postman collection is included so that the deployed API can also be vulnerability scanned with Fortify WebInspect and/or Fortify ScanCentral DAST.
 
 
 ---

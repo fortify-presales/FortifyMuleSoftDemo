@@ -1,5 +1,5 @@
 #
-# Example script to perform Fortify SCA static analysis
+# Example script to perform Fortify static analysis
 #
 
 # Parameters
@@ -31,7 +31,7 @@ Write-Host Running translation and scan...
 
 & sourceanalyzer '-Dcom.fortify.sca.ProjectRoot=.fortify' $ScanSwitches -b "$AppName" -clean
 & sourceanalyzer '-Dcom.fortify.sca.ProjectRoot=.fortify' $ScanSwitches -b "$AppName" mule-domain/src/main mule-api-app/src/main
-& sourceanalyzer '-Dcom.fortify.sca.ProjectRoot=.fortify' $ScanSwitches -b "$AppName" -verbose -rules rules/mulesoft_rules.xml -build-project "$AppName" -build-version "$AppVersion" -build-label "SNAPSHOT" -scan -f "$($AppName).fpr"
+& sourceanalyzer '-Dcom.fortify.sca.ProjectRoot=.fortify' $ScanSwitches -b "$AppName" -verbose -build-project "$AppName" -build-version "$AppVersion" -build-label "SNAPSHOT" -scan -f "$($AppName).fpr"
 
 
 # summarise issue count by analyzer
