@@ -132,6 +132,46 @@ Total for all analyzers => 22 Issues
 
 Note: because the API project also contains some Java beans and encryption keys - these issues are also found.
 
+
+**Fortify ScanCentral (SAST) scan**
+
+Since MuleSoft uses non standard Maven directories (e.g. `src/main/mule`) and Fortify ScanCentral SAST `package`
+command cannot yet pickup custom directories, any Maven `pom.xml` files will need "tweaking" to copy files from
+`src/main/mule` to `src/main/resources/mule`. An example configuration of the "maven-resources-plugin" to achieve
+this is shown below:
+
+```
+	<plugin>
+		<artifactId>maven-resources-plugin</artifactId>
+		<version>3.3.1</version>
+		<executions>
+		  <execution>
+			<id>copy-resources</id>
+			<phase>validate</phase>
+			<goals>
+			  <goal>copy-resources</goal>
+			</goals>
+			<configuration>
+			  <outputDirectory>${basedir}/src/main/resources/mule</outputDirectory>
+			  <resources>          
+				<resource>
+				  <directory>src/main/mule</directory>
+				  <filtering>true</filtering>
+				</resource>
+			  </resources>              
+			</configuration>            
+		  </execution>
+		</executions>
+	  </plugin>
+```			  
+
+To create a ScanCentral SAST package, you can then carry out commands similar to the following:
+
+```
+cd mule-api-app
+scancentral package -bt mvn -bc "clean package" -o package.zip
+...
+```
 **Fortify WebInpsect (DAST) scan**
 
 A Postman collection is included so that the deployed API can also be vulnerability scanned with [Fortify WebInspect](https://www.microfocus.com/en-us/cyberres/application-security/webinspect).

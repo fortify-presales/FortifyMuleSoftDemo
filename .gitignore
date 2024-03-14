@@ -1,1 +1,8 @@
 /.env
+/.fortify
+/.idea
+
+package.zip
+
+**/.project
+**/src/main/resources/mule
